@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AppShell, NavItem, ThemeProvider } from '@devdepth/ui';
+import { AppShell, NavItem, ThemeProvider, Icon } from '@devdepth/ui';
 import { useAnonymousUser } from '@/features/user/useAnonymousUser';
 import { VisualizerStudio } from '@/features/visualizer/VisualizerStudio';
 import { LearnerDashboard } from './components/Dashboard/LearnerDashboard';
@@ -9,11 +9,11 @@ import { APIMonitor } from './components/APIMonitor';
 import { DevDepthAPI } from './api/client';
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-  { id: 'courses', label: 'Learn & Courses', icon: '📚' },
-  { id: 'visualizer', label: 'Visual Lab Studio', icon: '⚡' },
-  { id: 'practice', label: 'Practice IDE', icon: '💻' },
-  { id: 'api', label: 'Go API Monitor', icon: '🔌' },
+  { id: 'dashboard', label: 'Dashboard', icon: <Icon name="barChart" size={18} /> },
+  { id: 'courses', label: 'Learn & Courses', icon: <Icon name="bookOpen" size={18} /> },
+  { id: 'visualizer', label: 'Visual Lab Studio', icon: <Icon name="zap" size={18} /> },
+  { id: 'practice', label: 'Practice IDE', icon: <Icon name="terminal" size={18} /> },
+  { id: 'api', label: 'Go API Monitor', icon: <Icon name="server" size={18} /> },
 ];
 
 export function AppContent() {

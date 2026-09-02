@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { colors, radius, zIndex, motion, shadows } from '../theme';
+import { radius, zIndex, motion, shadows } from '../theme';
 import { useTheme } from '../theme/ThemeContext';
 import { Button } from './Button';
+import { Icon } from '../icons';
 
 export interface AuthModalProps {
   isOpen: boolean;
@@ -52,7 +53,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         setErrorMsg(data.error?.message || data.message || 'Authentication failed');
       }
     } catch (err: any) {
-      // Demo Fallback login for testing when backend auth is deferred
       if (onSuccess) {
         onSuccess({ email, name: email.split('@')[0] });
       }
@@ -122,7 +122,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             zIndex: 10,
           }}
         >
-          ✕
+          <Icon name="close" size={16} color={currentColors.text} />
         </button>
 
         {/* LEFT COLUMN: Brand Canvas Graphic with Dot Grid Pattern */}
@@ -150,12 +150,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: 800,
                 color: '#FFF',
-                fontSize: '1.1rem',
               }}
             >
-              ✦
+              <Icon name="sparkles" size={18} color="#FFFFFF" />
             </div>
             <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.02em', color: currentColors.text }}>
               DEVDEPTH
@@ -186,11 +184,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   color: currentColors.primaryLight,
                   fontSize: '0.75rem',
                   fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
                 }}
               >
-                ⚡ Visual Engine
+                <Icon name="zap" size={14} color={currentColors.primaryLight} /> Visual Engine
               </span>
-              <span style={{ fontSize: '0.75rem', color: currentColors.muted }}>Monaco IDE</span>
+              <span style={{ fontSize: '0.75rem', color: currentColors.muted, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <Icon name="terminal" size={13} color={currentColors.muted} /> Monaco IDE
+              </span>
             </div>
 
             <p style={{ margin: 0, fontSize: '0.85rem', color: currentColors.textSecondary, lineHeight: 1.5 }}>
@@ -323,10 +326,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     border: 'none',
                     color: currentColors.muted,
                     cursor: 'pointer',
-                    fontSize: '0.8rem',
                   }}
                 >
-                  {showPassword ? '🙈' : '👁️'}
+                  <Icon name={showPassword ? 'eyeOff' : 'eye'} size={16} color={currentColors.muted} />
                 </button>
               </div>
             </div>
@@ -355,6 +357,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <Button
               type="button"
               variant="secondary"
+              leftIcon={<Icon name="globe" size={16} />}
               style={{
                 width: '100%',
                 padding: '10px',
@@ -366,7 +369,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 onClose();
               }}
             >
-              🌐 Continue with Google
+              Continue with Google
             </Button>
 
             <div style={{ marginTop: '16px', textAlign: 'center', fontSize: '0.8rem', color: currentColors.muted }}>

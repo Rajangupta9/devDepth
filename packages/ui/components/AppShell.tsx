@@ -3,6 +3,7 @@ import { radius, zIndex, shadows } from '../theme';
 import { useTheme } from '../theme/ThemeContext';
 import { AuthModal } from './AuthModal';
 import { Button } from './Button';
+import { Icon } from '../icons';
 
 export interface NavItem {
   id: string;
@@ -97,13 +98,11 @@ export const AppShell: React.FC<AppShellProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: 800,
-                fontSize: '1.25rem',
                 color: '#FFF',
                 boxShadow: shadows.glowPrimary,
               }}
             >
-              ✦
+              <Icon name="sparkles" size={20} color="#FFFFFF" />
             </div>
             <div>
               <div style={{ fontWeight: 800, fontSize: '1.15rem', letterSpacing: '-0.03em', color: colors.text, fontFamily: 'Outfit, sans-serif' }}>
@@ -140,7 +139,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                     boxShadow: isActive ? `0 4px 14px ${colors.primaryGlow}` : 'none',
                   }}
                 >
-                  <span style={{ fontSize: '1rem', color: isActive ? colors.primaryLight : colors.muted }}>{item.icon}</span>
+                  <span style={{ display: 'inline-flex', color: isActive ? colors.primaryLight : colors.muted }}>{item.icon}</span>
                   <span>{item.label}</span>
                 </button>
               );
@@ -159,14 +158,18 @@ export const AppShell: React.FC<AppShellProps> = ({
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ color: colors.muted, fontWeight: 500 }}>Go Backend API</span>
+              <span style={{ color: colors.muted, fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Icon name="server" size={14} color={colors.muted} /> Go API
+              </span>
               <span style={{ color: colors.success, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: colors.success }} />
                 :8080 Active
               </span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ color: colors.muted, fontWeight: 500 }}>PostgreSQL DB</span>
+              <span style={{ color: colors.muted, fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Icon name="database" size={14} color={colors.muted} /> PostgreSQL DB
+              </span>
               <span style={{ color: colors.purple, fontWeight: 700 }}>pgkit Engine</span>
             </div>
           </div>
@@ -213,7 +216,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                 width: '360px',
               }}
             >
-              <span style={{ color: colors.muted, fontSize: '0.9rem' }}>🔍</span>
+              <Icon name="search" size={16} color={colors.muted} />
               <input
                 type="text"
                 placeholder="Search CS concepts, algorithms, labs..."
@@ -252,8 +255,8 @@ export const AppShell: React.FC<AppShellProps> = ({
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  padding: '7px 14px',
+                  gap: '8px',
+                  padding: '7px 16px',
                   borderRadius: radius.full,
                   backgroundColor: colors.background,
                   border: `1px solid ${colors.borderSubtle}`,
@@ -264,7 +267,8 @@ export const AppShell: React.FC<AppShellProps> = ({
                   transition: 'all 200ms ease',
                 }}
               >
-                <span>{isDark ? '☀️ Light' : '🌙 Dark'}</span>
+                <Icon name={isDark ? 'sun' : 'moon'} size={15} color={isDark ? '#F59E0B' : colors.primaryLight} />
+                <span>{isDark ? 'Light' : 'Dark'}</span>
               </button>
 
               {/* API Online Status Badge */}
@@ -309,7 +313,8 @@ export const AppShell: React.FC<AppShellProps> = ({
                     fontWeight: 700,
                   }}
                 >
-                  <span>👤 {user.name || user.email.split('@')[0]}</span>
+                  <Icon name="user" size={15} color={colors.primaryLight} />
+                  <span>{user.name || user.email.split('@')[0]}</span>
                 </div>
               ) : (
                 <Button

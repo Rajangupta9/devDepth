@@ -8,7 +8,8 @@
 
 ### Core Architectural Mandate: "Never Implement the Same Design or Logic Twice"
 To ensure DevDepth remains scalable from 10 features to 500 features without codebase bloat or visual drift, all code must adhere to strict centralization:
-- **One Theme & Design Token System**: No ad-hoc Tailwind/inline utility colors or fonts. All UI consumes `packages/ui` design tokens.
+- **One Theme & Design Token System**: `packages/ui/theme` is the single source of truth for colors (supporting both dark and light modes), typography, spacing, radius, shadows, and motion.
+- **One Central Icon Abstraction (`packages/ui/icons`)**: Single application-wide icon system wrapping Lucide icons. No random emojis or manually installed ad-hoc icon libraries across features.
 - **One Reusable Page Shell (`AppShell`)**: All views render inside a standard shell with consistent topbar, sidebar, page header, and content areas.
 - **Anonymous Identity in V1 (Zero Friction)**: No login/signup wall for V1. Browser auto-generates a persistent anonymous identifier mapped to PostgreSQL `users`. All user state (`progress`, `submissions`, `bookmarks`, `notes`, `mastery`) attaches to `user_id` so auth can be enabled later with zero database refactoring.
 - **Strict Go Backend Architecture**: Handler → Service → Repository → PostgreSQL using standardized API response envelopes.
@@ -32,34 +33,41 @@ To ensure DevDepth remains scalable from 10 features to 500 features without cod
               │                             └───────┬───────┘               │
        ┌──────┴──────┐                              │                       │
        │             │                          PostgreSQL                  │
-     Theme       Components                         │                       │
+ Theme/Icons     Components                         │                       │
        │                                            │                       │
        └──── ONE SOURCE OF TRUTH ───────────────────┴───────────────────────┘
 ```
 
 ---
 
-## 1. Design System & Token Architecture (`packages/ui`)
+## 1. Design System, Icons & Token Architecture (`packages/ui`)
 
 ### Directory Structure
 ```text
 packages/ui/
 ├── theme/
-│   ├── colors.ts       # Central color palette (background, surface, primary, secondary, text, muted, border, states)
+│   ├── colors.ts       # Dark & Light mode color palettes
 │   ├── typography.ts   # Font families, sizes, weights, line heights
 │   ├── spacing.ts      # Spacing scale (4px, 8px, 12px, 16px, 24px, 32px, 48px...)
 │   ├── radius.ts       # Border radius scale (xs, sm, md, lg, xl, full)
 │   ├── shadows.ts      # Elevation and glow effects
 │   ├── motion.ts       # Timings (fast: 150ms, normal: 250ms, slow: 450ms) & bezier easing functions
-│   ├── breakpoints.ts  # Responsive viewports (sm, md, lg, xl, 2xl)
+│   ├── ThemeContext.tsx# Dynamic Dark / Light mode provider & toggle hook
+│   └── index.ts
+│
+├── icons/
+│   ├── icon-map.ts     # Lucide icon mapping & semantic feature map
+│   ├── Icon.tsx        # Central Icon wrapper component <Icon name="..." />
+│   ├── FeatureIcon.tsx # Semantic feature component <FeatureIcon feature="networking" />
 │   └── index.ts
 │
 ├── components/
-│   ├── AppShell.tsx    # Standard sidebar + topbar + page container
-│   ├── Button.tsx     # Variant-driven buttons (primary, secondary, ghost, danger)
-│   ├── Card.tsx       # Glassmorphism & surface card containers
+│   ├── AppShell.tsx    # Standard sidebar + topbar + page container + theme toggle
+│   ├── Button.tsx     # Variant-driven buttons (primary, secondary, ghost, danger, accent)
+│   ├── Card.tsx       # Glassmorphic & surface card containers
 │   ├── Badge.tsx      # Difficulty, status, and tag indicators
 │   ├── Modal.tsx      # Reusable dialog overlays
+│   ├── AuthModal.tsx  # Split-card login/signup modal (VOICE AURA style)
 │   ├── Tabs.tsx       # Section switcher tabs
 │   ├── Progress.tsx   # Progress bars & circular indicators
 │   ├── CodeBlock.tsx  # Syntax-highlighted code container
@@ -68,62 +76,70 @@ packages/ui/
 └── index.ts
 ```
 
-### Motion Design System Specification
+---
+
+## 2. Icon Standardization Protocol (`packages/ui/icons`)
+
+All icons across DevDepth must be rendered using the central `<Icon>` or `<FeatureIcon>` wrappers:
+
+```tsx
+import { Icon, FeatureIcon } from "@devdepth/ui";
+
+// Rendering standard Lucide icon
+<Icon name="database" size={18} color="var(--primary)" />
+
+// Rendering semantic CS domain feature icon
+<FeatureIcon feature="networking" size={18} />
+```
+
+### Semantic CS Domain Mapping
 ```ts
-export const motion = {
-  duration: {
-    fast: 150,    // Micro-interactions (hover, active states)
-    normal: 250,  // Component state transitions, tabs, modals
-    slow: 450,    // Algorithm visualizer step animations & node movements
-  },
-  easing: {
-    standard: "cubic-bezier(0.4, 0.0, 0.2, 1)",
-    enter: "cubic-bezier(0.0, 0.0, 0.2, 1)",
-    exit: "cubic-bezier(0.4, 0.0, 1, 1)",
-  }
+export const featureIconMap = {
+  dsa: 'binary',
+  algorithms: 'gitBranch',
+  networking: 'network',
+  operatingSystems: 'cpu',
+  databases: 'database',
+  systemDesign: 'layers',
+  debugging: 'bug',
+  coding: 'terminal',
+  analytics: 'barChart',
+  interview: 'messageSquare',
+  visualizer: 'zap',
+  courses: 'bookOpen',
+  practice: 'code',
+  api: 'server',
 };
 ```
 
 ---
 
-## 2. Reusable Page Structure (`AppShell`)
+## 3. Reusable Page Structure (`AppShell`)
 
 Every page in DevDepth inherits from `AppShell`:
 
 ```text
 AppShell
 │
-├── Sidebar           # Collapsible navigation (Dashboard, Learn, Problems, Visual Lab, Courses, Interview, Analytics)
-├── Topbar            # Search bar, active module indicator, anonymous user profile badge & metrics
+├── Sidebar           # Navigation (Dashboard, Learn, Visual Lab, Practice, API Monitor)
+├── Topbar            # Search bar, ☀️ Light / 🌙 Dark theme toggle, API status, Anonymous/User ID badge
 └── Page
-     ├── PageHeader   # Breadcrumbs, title, quick actions, filter bars
+     ├── PageHeader   # Title, quick actions, filter bars
      ├── Content      # Viewport-fitted workspace layout
-     └── PageFooter   # Status bar (Go API connection, database pool state, runner health)
+     └── PageFooter   # Infrastructure status bar
 ```
 
 ---
 
-## 3. V1 Anonymous User Identity System
+## 4. V1 Anonymous User Identity & Auth System
 
-To maximize conversion and zero-friction onboarding in V1:
-1. **Client Generation**: On initial load, frontend generates or reads a UUID (`devdepth_anon_id`) in secure cookies / `localStorage`.
-2. **Auto Registration**: Sent via header `X-Anonymous-ID` or cookie on every request to Go API.
-3. **Database Mapping**: Go API auto-upserts `users` record:
-   ```sql
-   CREATE TABLE users (
-       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-       anonymous_id VARCHAR(64) UNIQUE NOT NULL,
-       email VARCHAR(255) NULL,
-       name VARCHAR(255) NULL,
-       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-       last_seen_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-   );
-   ```
-4. **Auth Upgrade Path**: When user eventually registers with email/auth, `users.email` is filled and `user_id` links seamlessly to all existing progress. No table rebuilds required.
+1. **Client Generation**: On initial load, frontend generates `anon_...` identifier saved in `localStorage`.
+2. **Auto Registration**: Sent via header `X-Anonymous-ID` on request to Go API.
+3. **Auth Upgrade**: Users can click "Sign In / Register" in `AppShell` header to open the split-card `AuthModal` (VOICE AURA style) and log in. Anonymous user progress links directly to the user's permanent account.
 
 ---
 
-## 4. PostgreSQL Source of Truth Schema
+## 5. PostgreSQL Source of Truth Schema
 
 ```text
 PostgreSQL
@@ -153,7 +169,7 @@ PostgreSQL
 
 ---
 
-## 5. Standardized Go Backend Architecture (`apps/api`)
+## 6. Standardized Go Backend Architecture (`apps/api`)
 
 Every feature module inside `apps/api/internal/<feature>/` enforces clean 4-layer isolation:
 
@@ -161,78 +177,12 @@ Every feature module inside `apps/api/internal/<feature>/` enforces clean 4-laye
 HTTP Request → Handler → Service → Repository → PostgreSQL
 ```
 
-### Directory Structure
-```text
-apps/api/
-├── main.go
-├── go.mod
-└── internal/
-    ├── user/            # Anonymous identity & user state
-    ├── course/          # Course & lesson management
-    ├── lesson/          # Concept lessons & articles
-    ├── problem/         # Coding problem catalog
-    ├── submission/      # Code execution & submission management
-    ├── progress/        # User progress tracking
-    ├── analytics/       # Learner metrics & heatmaps
-    ├── visualizer/      # Visual lab state definitions
-    ├── recommendation/  # AI / rule-based next step engines
-    └── interview/       # Mock interview session handlers
-```
-
-### Standardized API Response Envelopes
-
-#### Success Envelope (`200 / 201`)
-```json
-{
-  "success": true,
-  "data": { ... },
-  "error": null,
-  "meta": {
-    "page": 1,
-    "total": 42
-  }
-}
-```
-
-#### Error Envelope (`4xx / 5xx`)
-```json
-{
-  "success": false,
-  "data": null,
-  "error": {
-    "code": "PROBLEM_NOT_FOUND",
-    "message": "Problem with slug 'two-sum' was not found"
-  },
-  "meta": {}
-}
-```
-
----
-
-## 6. Standardized Frontend Feature Architecture (`apps/web`)
-
-```text
-src/
-├── features/
-│   ├── dashboard/       # Dashboard components, analytics hooks, stats widgets
-│   ├── courses/         # Course catalog, lesson viewer, curriculum tree
-│   ├── problems/        # Problem list, IDE layout, test runner, submission history
-│   ├── visualizer/      # Data-driven algorithm & protocol visual engine
-│   └── analytics/       # Weak topic radar, study heatmap, mastery cards
-│
-├── components/          # Global shared components wrapping packages/ui
-├── hooks/               # Global hooks (useUser, useApi, useLocalStorage)
-├── lib/                 # Standard API client & fetchers
-└── types/               # Shared TypeScript definitions
-```
-
 ---
 
 ## 7. Data-Driven Visualization Engine Protocol
 
-Visualizations do **not** hardcode custom animation components per algorithm. Instead, algorithm execution produces a standardized event stream:
+Visualizations produce a standardized event stream rather than custom canvas components per feature:
 
-### Event Stream Protocol
 ```typescript
 export type VisualEventType = 
   | 'READ' 
@@ -244,62 +194,14 @@ export type VisualEventType =
   | 'PUSH' 
   | 'POP'
   | 'PACKET_TRANSMIT';
-
-export interface VisualStepEvent {
-  step: number;
-  type: VisualEventType;
-  targets: (string | number)[];
-  stateSnapshot: Record<string, any>;
-  variables: Record<string, string | number>;
-  codeLine: number;
-  description: string;
-}
-```
-
-### Core Engine Architecture
-```text
-Algorithm / Lab Payload
-       │
-       ↓
-Visual Event Stream Generator
-       │
-       ↓
-Event Reducer & Timeline Store (Step N <-> Step N+1)
-       │
-       ├───────────────────────┼───────────────────────┐
-       ↓                       ↓                       ↓
-Array/Tree Canvas       Variables Inspector    Code Highlighting
-```
-
----
-
-## 8. Signature DevDepth Workspace Screen
-
-The core learning interface is the **Split-View Signature Workspace**:
-
-```text
-┌────────────────────────────────────────────────────────────────────────────┐
-│ DEVDEPTH  /  Binary Search                                       User: #anon84 │
-├─────────────────┬──────────────────────────────────────────┬───────────────┤
-│ Concept & Notes │ Visualizer Engine Canvas                 │ Practice IDE  │
-│                 │                                          │               │
-│ • Explanation   │    [1]   [3]   [5]   [7]   [9]           │ def binary_.. │
-│ • Intuition     │               ↑                          │   left, right │
-│ O(log n)        │             mid=2                        │   while left..│
-│                 │                                          │     mid = ... │
-│                 ├──────────────────────────────────────────┤               │
-│                 │ ▶  ⏸️  ⏮️  ⏭️  ───●── Speed  [Step 3/8]   │               │
-│                 ├──────────────────────────────────────────┴───────────────┤
-│                 │ Variables: left=0  right=4  mid=2  target=7  found=false │
-└─────────────────┴──────────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ## Summary of Core Development Rules
 
-1. **Theme Source**: `packages/ui/theme` is the single source of truth for colors, typography, radius, spacing, shadows, and motion.
-2. **Page Shell**: All pages use `AppShell`. No custom one-off full-page wrappers.
-3. **User Identity**: All backend endpoints pass and recognize `user_id` derived from `X-Anonymous-ID` cookie/header.
-4. **Backend Pattern**: Every Go feature uses `Handler → Service → Repository → PostgreSQL` with standardized `{ success, data, error, meta }` response JSON.
-5. **Visual Engine**: New algorithm visualizations are added by registering step generators (`VisualStepEvent[]`), avoiding bespoke custom canvas code per feature.
+1. **One Icon Library**: All icons consume `@devdepth/ui` (`<Icon>` or `<FeatureIcon>`). No random emojis or third-party icon imports inside feature code.
+2. **One Theme System**: `packages/ui/theme` is the single source of truth for dark and light modes.
+3. **One Component System**: `packages/ui/components` contains all standard UI components.
+4. **One Motion System**: `packages/ui/theme/motion.ts` defines duration and easing curves.
+5. **One Set of Page Shell Patterns**: `AppShell` handles navigation, headers, theme toggles, and user badges.

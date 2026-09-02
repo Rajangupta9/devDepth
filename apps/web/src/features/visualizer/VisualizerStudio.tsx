@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Badge, CodeBlock } from '@devdepth/ui';
+import { Card, Button, Badge, CodeBlock, Icon } from '@devdepth/ui';
 import { generateBinarySearchEvents } from './algorithms';
 import { VisualStepEvent } from './engine';
 
@@ -64,13 +64,13 @@ export const VisualizerStudio: React.FC = () => {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <h2 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 800, color: '#F9FAFB', fontFamily: 'Outfit, sans-serif' }}>
+            <h2 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-main)', fontFamily: 'Outfit, sans-serif' }}>
               Visual Lab Studio
             </h2>
             <Badge variant="purple">Binary Search</Badge>
             <Badge variant="info">O(log n)</Badge>
           </div>
-          <p style={{ margin: '4px 0 0 0', fontSize: '0.875rem', color: '#9CA3AF' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
             Event-driven algorithm timeline reducer emitting state snapshots & dynamic step inspection.
           </p>
         </div>
@@ -81,21 +81,21 @@ export const VisualizerStudio: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
-            backgroundColor: 'rgba(11, 15, 29, 0.8)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            backgroundColor: 'var(--bg-card)',
+            border: '1px solid var(--border-subtle)',
             borderRadius: '9999px',
             padding: '6px 16px',
           }}
         >
-          <span style={{ fontSize: '0.85rem', color: '#9CA3AF', fontWeight: 500 }}>Target:</span>
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>Target:</span>
           <select
             value={target}
             onChange={(e) => setTarget(Number(e.target.value))}
             style={{
               padding: '4px 10px',
-              backgroundColor: '#111728',
-              color: '#3B82F6',
-              border: '1px solid #3B82F6',
+              backgroundColor: 'var(--bg-dark)',
+              color: 'var(--primary)',
+              border: '1px solid var(--primary)',
               borderRadius: '9999px',
               fontWeight: 700,
               outline: 'none',
@@ -118,8 +118,8 @@ export const VisualizerStudio: React.FC = () => {
           {/* Interactive Visual Canvas Sheet */}
           <Card variant="glass" style={{ minHeight: '300px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <span style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#9CA3AF', fontWeight: 700 }}>
-                Array State Inspector
+              <span style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <Icon name="layers" size={14} /> Array State Inspector
               </span>
               <Badge variant={currentEvent.type === 'VISIT' ? 'easy' : 'primary'}>
                 Event: {currentEvent.type}
@@ -134,9 +134,9 @@ export const VisualizerStudio: React.FC = () => {
                 const isRight = idx === rightPointer;
                 const isFound = currentEvent.stateSnapshot?.foundIndex === idx;
 
-                let borderCol = 'rgba(255, 255, 255, 0.1)';
-                let bgCol = '#111728';
-                let textCol = '#F9FAFB';
+                let borderCol = 'var(--border-subtle)';
+                let bgCol = 'var(--bg-card)';
+                let textCol = 'var(--text-main)';
 
                 if (isFound) {
                   borderCol = '#10B981';
@@ -172,7 +172,7 @@ export const VisualizerStudio: React.FC = () => {
                     </div>
 
                     {/* Pointer Labels */}
-                    <div style={{ fontSize: '0.72rem', fontFamily: 'monospace', color: '#9CA3AF', height: '18px' }}>
+                    <div style={{ fontSize: '0.72rem', fontFamily: 'monospace', color: 'var(--text-muted)', height: '18px' }}>
                       {isMid && <span style={{ color: '#60A5FA', fontWeight: 800 }}>mid</span>}
                       {isLeft && !isMid && <span style={{ color: '#F59E0B', fontWeight: 700 }}>L</span>}
                       {isRight && !isMid && <span style={{ color: '#06B6D4', fontWeight: 700 }}>R</span>}
@@ -185,15 +185,19 @@ export const VisualizerStudio: React.FC = () => {
             {/* Description Bar */}
             <div
               style={{
-                backgroundColor: 'rgba(7, 9, 19, 0.9)',
+                backgroundColor: 'var(--bg-dark)',
                 padding: '14px 18px',
                 borderRadius: '12px',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                border: '1px solid var(--border-subtle)',
                 fontSize: '0.875rem',
-                color: '#D1D5DB',
+                color: 'var(--text-main)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
               }}
             >
-              💡 <span style={{ fontWeight: 700, color: '#F9FAFB' }}>Step {stepIndex + 1}:</span> {currentEvent.description}
+              <Icon name="sparkles" size={16} color="var(--primary)" />
+              <span><strong style={{ color: 'var(--primary-light)' }}>Step {stepIndex + 1}:</strong> {currentEvent.description}</span>
             </div>
           </Card>
 
@@ -204,42 +208,46 @@ export const VisualizerStudio: React.FC = () => {
                 <Button
                   variant="secondary"
                   size="sm"
+                  leftIcon={<Icon name="rotateCcw" size={15} />}
                   onClick={() => {
                     setIsPlaying(false);
                     setStepIndex(0);
                   }}
                 >
-                  ⏮️ Reset
+                  Reset
                 </Button>
 
                 <Button
                   variant="secondary"
                   size="sm"
+                  leftIcon={<Icon name="stepBack" size={15} />}
                   onClick={() => setStepIndex((prev) => Math.max(0, prev - 1))}
                   disabled={stepIndex === 0}
                 >
-                  ◀️ Step Back
+                  Step Back
                 </Button>
 
                 <Button
                   variant="primary"
                   size="sm"
+                  leftIcon={<Icon name={isPlaying ? 'pause' : 'play'} size={15} />}
                   onClick={() => setIsPlaying(!isPlaying)}
                 >
-                  {isPlaying ? '⏸️ Pause' : '▶️ Play'}
+                  {isPlaying ? 'Pause' : 'Play'}
                 </Button>
 
                 <Button
                   variant="secondary"
                   size="sm"
+                  rightIcon={<Icon name="stepForward" size={15} />}
                   onClick={() => setStepIndex((prev) => Math.min(events.length - 1, prev + 1))}
                   disabled={stepIndex >= events.length - 1}
                 >
-                  Step Next ▶️
+                  Step Next
                 </Button>
               </div>
 
-              <span style={{ fontSize: '0.85rem', color: '#9CA3AF', fontWeight: 700 }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 700 }}>
                 Step {stepIndex + 1} of {events.length}
               </span>
             </div>
@@ -253,8 +261,8 @@ export const VisualizerStudio: React.FC = () => {
 
           {/* Real-time State & Variable Table */}
           <Card variant="surface">
-            <h4 style={{ margin: '0 0 14px 0', fontSize: '0.8rem', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700 }}>
-              Variable State Inspector
+            <h4 style={{ margin: '0 0 14px 0', fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Icon name="terminal" size={14} /> Variable State Inspector
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontFamily: 'monospace', fontSize: '0.85rem' }}>
               {Object.entries(currentEvent.variables).map(([key, val]) => (
@@ -264,12 +272,12 @@ export const VisualizerStudio: React.FC = () => {
                     display: 'flex',
                     justifyContent: 'space-between',
                     padding: '8px 12px',
-                    backgroundColor: '#070913',
+                    backgroundColor: 'var(--bg-dark)',
                     borderRadius: '8px',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    border: '1px solid var(--border-subtle)',
                   }}
                 >
-                  <span style={{ color: '#9CA3AF' }}>{key}</span>
+                  <span style={{ color: 'var(--text-muted)' }}>{key}</span>
                   <span style={{ color: typeof val === 'boolean' ? (val ? '#10B981' : '#EF4444') : '#60A5FA', fontWeight: 700 }}>
                     {String(val)}
                   </span>
