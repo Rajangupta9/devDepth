@@ -27,3 +27,4 @@ export * from './shadows';
 export * from './motion';
 export * from './breakpoints';
 export * from './zIndex';
+export * from './ThemeContext';

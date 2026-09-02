@@ -6,3 +6,4 @@ export * from './Tabs';
 export * from './Progress';
 export * from './CodeBlock';
 export * from './AppShell';
+export * from './AuthModal';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AppShell, NavItem } from '@devdepth/ui';
+import { AppShell, NavItem, ThemeProvider } from '@devdepth/ui';
 import { useAnonymousUser } from '@/features/user/useAnonymousUser';
 import { VisualizerStudio } from '@/features/visualizer/VisualizerStudio';
 import { LearnerDashboard } from './components/Dashboard/LearnerDashboard';
@@ -16,9 +16,10 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'api', label: 'Go API Monitor', icon: '🔌' },
 ];
 
-export function App() {
+export function AppContent() {
   const [activeNav, setActiveNav] = useState<string>('dashboard');
   const [apiStatus, setApiStatus] = useState<'connected' | 'disconnected' | 'connecting'>('connecting');
+  const [user, setUser] = useState<{ email: string; name?: string } | null>(null);
   const { anonymousId } = useAnonymousUser();
 
   useEffect(() => {
@@ -41,6 +42,8 @@ export function App() {
       onNavSelect={setActiveNav}
       anonymousId={anonymousId}
       apiStatus={apiStatus}
+      user={user}
+      onAuthSuccess={(loggedUser) => setUser(loggedUser)}
     >
       {activeNav === 'dashboard' && <LearnerDashboard onNavigate={setActiveNav} />}
       {activeNav === 'courses' && <CourseHub onSelectLesson={() => setActiveNav('visualizer')} />}
@@ -48,6 +51,14 @@ export function App() {
       {activeNav === 'practice' && <CodeEditor />}
       {activeNav === 'api' && <APIMonitor />}
     </AppShell>
+  );
+}
+
+export function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
 

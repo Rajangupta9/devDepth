@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { colors, radius, zIndex, shadows } from '../theme';
+import { radius, zIndex, shadows } from '../theme';
+import { useTheme } from '../theme/ThemeContext';
+import { AuthModal } from './AuthModal';
+import { Button } from './Button';
 
 export interface NavItem {
   id: string;
@@ -13,6 +16,8 @@ export interface AppShellProps {
   onNavSelect: (id: string) => void;
   anonymousId: string;
   apiStatus: 'connected' | 'disconnected' | 'connecting';
+  user?: { email: string; name?: string } | null;
+  onAuthSuccess?: (user: { email: string; name?: string }) => void;
   children: React.ReactNode;
 }
 
@@ -22,9 +27,15 @@ export const AppShell: React.FC<AppShellProps> = ({
   onNavSelect,
   anonymousId,
   apiStatus,
+  user,
+  onAuthSuccess,
   children,
 }) => {
+  const { mode, colors, toggleTheme } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const isDark = mode === 'dark';
 
   return (
     <div
@@ -37,6 +48,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         overflow: 'hidden',
         fontFamily: 'Inter, system-ui, sans-serif',
         position: 'relative',
+        transition: 'background-color 250ms ease, color 250ms ease',
       }}
     >
       {/* Outer Blueprint Layout Container */}
@@ -63,6 +75,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             flexDirection: 'column',
             flexShrink: 0,
             overflow: 'hidden',
+            transition: 'all 250ms ease',
           }}
         >
           {/* Brand Header */}
@@ -172,6 +185,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
+            transition: 'all 250ms ease',
           }}
         >
           {/* Topbar Header Bar */}
@@ -196,7 +210,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                 border: `1px solid ${colors.borderSubtle}`,
                 borderRadius: radius.full,
                 padding: '8px 18px',
-                width: '380px',
+                width: '360px',
               }}
             >
               <span style={{ color: colors.muted, fontSize: '0.9rem' }}>🔍</span>
@@ -229,14 +243,37 @@ export const AppShell: React.FC<AppShellProps> = ({
               </span>
             </div>
 
-            {/* Right Status & Anonymous Identity Pill */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            {/* Right Status, Theme Toggle & User Auth Controls */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              {/* Theme Toggle Button (Light/Dark Switch) */}
+              <button
+                onClick={toggleTheme}
+                title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '7px 14px',
+                  borderRadius: radius.full,
+                  backgroundColor: colors.background,
+                  border: `1px solid ${colors.borderSubtle}`,
+                  color: colors.text,
+                  cursor: 'pointer',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  transition: 'all 200ms ease',
+                }}
+              >
+                <span>{isDark ? '☀️ Light' : '🌙 Dark'}</span>
+              </button>
+
+              {/* API Online Status Badge */}
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px',
-                  padding: '6px 14px',
+                  gap: '6px',
+                  padding: '6px 12px',
                   borderRadius: radius.full,
                   backgroundColor: colors.background,
                   border: `1px solid ${colors.borderSubtle}`,
@@ -249,7 +286,6 @@ export const AppShell: React.FC<AppShellProps> = ({
                     height: '8px',
                     borderRadius: '50%',
                     backgroundColor: apiStatus === 'connected' ? colors.success : colors.warning,
-                    boxShadow: apiStatus === 'connected' ? `0 0 10px ${colors.success}` : 'none',
                   }}
                 />
                 <span style={{ color: colors.muted, fontWeight: 500 }}>
@@ -257,34 +293,52 @@ export const AppShell: React.FC<AppShellProps> = ({
                 </span>
               </div>
 
-              {/* User Anonymous Pill Badge */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '6px 16px',
-                  borderRadius: radius.full,
-                  background: `linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(59, 130, 246, 0.15))`,
-                  border: `1px solid ${colors.primary}`,
-                  fontSize: '0.8rem',
-                  color: colors.text,
-                }}
-              >
-                <span style={{ color: colors.primaryLight, fontWeight: 600 }}>ID:</span>
-                <span style={{ fontFamily: 'monospace', color: colors.cyan, fontWeight: 700 }}>
-                  {anonymousId || 'anon_guest'}
-                </span>
-              </div>
+              {/* Account / Auth Button or User Badge */}
+              {user ? (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '6px 16px',
+                    borderRadius: radius.full,
+                    background: `linear-gradient(135deg, ${colors.primaryGlow}, ${colors.indigoGlow})`,
+                    border: `1px solid ${colors.primary}`,
+                    fontSize: '0.8rem',
+                    color: colors.text,
+                    fontWeight: 700,
+                  }}
+                >
+                  <span>👤 {user.name || user.email.split('@')[0]}</span>
+                </div>
+              ) : (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => setIsAuthModalOpen(true)}
+                  style={{ fontWeight: 700, padding: '7px 18px' }}
+                >
+                  Sign In / Register
+                </Button>
+              )}
             </div>
           </header>
 
           {/* Main Dynamic Content Workspace */}
-          <main style={{ flex: 1, overflowY: 'auto', padding: '28px' }}>
+          <main style={{ flex: 1, overflowY: 'auto', padding: '28px', backgroundColor: colors.canvas }}>
             {children}
           </main>
         </div>
       </div>
+
+      {/* Auth Modal (Split-Card VOICE AURA Style) */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={(loggedUser) => {
+          if (onAuthSuccess) onAuthSuccess(loggedUser);
+        }}
+      />
     </div>
   );
 };
