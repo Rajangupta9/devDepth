@@ -1,26 +1,31 @@
 export const colors = {
-  // Backgrounds & Surface Palette
-  background: '#0B0F19',
-  surface: '#111827',
-  surfaceHover: '#1F2937',
-  surfaceActive: '#374151',
-  surfaceGlass: 'rgba(17, 24, 39, 0.75)',
+  // Backgrounds & Blueprint Palette
+  background: '#070913',
+  canvas: '#0B0F1D',
+  surface: '#111728',
+  surfaceHover: '#172036',
+  surfaceActive: '#222C47',
+  surfaceGlass: 'rgba(17, 23, 40, 0.85)',
 
-  // Brand Primaries
-  primary: '#6366F1',       // Indigo primary accent
-  primaryHover: '#4F46E5',
-  primaryGlow: 'rgba(99, 102, 241, 0.25)',
-  
-  // Brand Secondaries & Accents
-  secondary: '#10B981',     // Emerald secondary accent
+  // Brand Primaries (Vibrant Electric Blue & Indigo)
+  primary: '#3B82F6',
+  primaryHover: '#2563EB',
+  primaryLight: '#60A5FA',
+  primaryGlow: 'rgba(59, 130, 246, 0.35)',
+
+  indigo: '#6366F1',
+  indigoGlow: 'rgba(99, 102, 241, 0.35)',
+
+  // Brand Accents
+  secondary: '#10B981',
   secondaryHover: '#059669',
-  secondaryGlow: 'rgba(16, 185, 129, 0.25)',
+  secondaryGlow: 'rgba(16, 185, 129, 0.3)',
 
   purple: '#8B5CF6',
-  purpleGlow: 'rgba(139, 92, 246, 0.25)',
+  purpleGlow: 'rgba(139, 92, 246, 0.3)',
 
   cyan: '#06B6D4',
-  cyanGlow: 'rgba(6, 182, 212, 0.25)',
+  cyanGlow: 'rgba(6, 182, 212, 0.3)',
 
   // Typography Palette
   text: '#F9FAFB',
@@ -29,22 +34,23 @@ export const colors = {
   subtle: '#6B7280',
 
   // Borders & Dividers
-  border: '#1F2937',
-  borderHover: '#374151',
-  borderFocus: '#6366F1',
+  border: 'rgba(99, 102, 241, 0.16)',
+  borderSubtle: 'rgba(255, 255, 255, 0.08)',
+  borderHover: 'rgba(99, 102, 241, 0.4)',
+  borderFocus: '#3B82F6',
 
   // Status & Feedback Tokens
   success: '#10B981',
-  successGlow: 'rgba(16, 185, 129, 0.2)',
+  successGlow: 'rgba(16, 185, 129, 0.25)',
   warning: '#F59E0B',
-  warningGlow: 'rgba(245, 158, 11, 0.2)',
+  warningGlow: 'rgba(245, 158, 11, 0.25)',
   error: '#EF4444',
-  errorGlow: 'rgba(239, 68, 68, 0.2)',
+  errorGlow: 'rgba(239, 68, 68, 0.25)',
   info: '#3B82F6',
-  infoGlow: 'rgba(59, 130, 246, 0.2)',
+  infoGlow: 'rgba(59, 130, 246, 0.25)',
 
   // Code & Syntax Highlighting Tokens
-  codeBg: '#0D1117',
+  codeBg: '#090D18',
   codeKeyword: '#FF7B72',
   codeFunction: '#D2A8FF',
   codeString: '#A5D6FF',

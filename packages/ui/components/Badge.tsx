@@ -2,7 +2,7 @@ import React from 'react';
 import { colors, radius } from '../theme';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: 'easy' | 'medium' | 'hard' | 'info' | 'purple' | 'muted';
+  variant?: 'easy' | 'medium' | 'hard' | 'info' | 'purple' | 'muted' | 'primary';
   size?: 'sm' | 'md';
 }
 
@@ -37,8 +37,8 @@ export const Badge: React.FC<BadgeProps> = ({
       case 'info':
         return {
           backgroundColor: colors.infoGlow,
-          color: colors.info,
-          border: `1px solid ${colors.info}`,
+          color: colors.primaryLight,
+          border: `1px solid ${colors.primary}`,
         };
       case 'purple':
         return {
@@ -46,12 +46,18 @@ export const Badge: React.FC<BadgeProps> = ({
           color: colors.purple,
           border: `1px solid ${colors.purple}`,
         };
+      case 'primary':
+        return {
+          backgroundColor: colors.primaryGlow,
+          color: colors.primaryLight,
+          border: `1px solid ${colors.primary}`,
+        };
       case 'muted':
       default:
         return {
           backgroundColor: colors.surfaceHover,
           color: colors.muted,
-          border: `1px solid ${colors.border}`,
+          border: `1px solid ${colors.borderSubtle}`,
         };
     }
   };
@@ -59,11 +65,11 @@ export const Badge: React.FC<BadgeProps> = ({
   const baseStyle: React.CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
-    fontWeight: 600,
+    fontWeight: 700,
     borderRadius: radius.full,
-    padding: size === 'sm' ? '2px 8px' : '4px 12px',
-    fontSize: size === 'sm' ? '0.7rem' : '0.75rem',
-    letterSpacing: '0.025em',
+    padding: size === 'sm' ? '3px 10px' : '5px 14px',
+    fontSize: size === 'sm' ? '0.68rem' : '0.75rem',
+    letterSpacing: '0.04em',
     textTransform: 'uppercase',
     ...getVariantStyles(),
     ...style,

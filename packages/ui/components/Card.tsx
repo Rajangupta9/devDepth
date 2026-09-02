@@ -19,8 +19,10 @@ export const Card: React.FC<CardProps> = ({
       case 'glass':
         return {
           backgroundColor: colors.surfaceGlass,
-          backdropFilter: 'blur(12px)',
-          border: `1px solid ${colors.border}`,
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: `1px solid ${colors.borderSubtle}`,
+          boxShadow: shadows.lg,
         };
       case 'glow':
         return {
@@ -31,22 +33,22 @@ export const Card: React.FC<CardProps> = ({
       case 'outline':
         return {
           backgroundColor: 'transparent',
-          border: `1px solid ${colors.border}`,
+          border: `1px solid ${colors.borderSubtle}`,
         };
       case 'surface':
       default:
         return {
           backgroundColor: colors.surface,
-          border: `1px solid ${colors.border}`,
+          border: `1px solid ${colors.borderSubtle}`,
         };
     }
   };
 
   const baseStyle: React.CSSProperties = {
     borderRadius: radius.lg,
-    padding: '20px',
+    padding: '22px',
     color: colors.text,
-    transition: interactive ? `transform ${motion.duration.fast}ms ${motion.easing.standard}, border-color ${motion.duration.fast}ms ${motion.easing.standard}` : 'none',
+    transition: interactive ? `transform ${motion.duration.fast}ms ${motion.easing.standard}, border-color ${motion.duration.fast}ms ${motion.easing.standard}, box-shadow ${motion.duration.fast}ms ${motion.easing.standard}` : 'none',
     cursor: interactive ? 'pointer' : 'default',
     ...getVariantStyles(),
     ...style,

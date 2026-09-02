@@ -1,8 +1,8 @@
 import React from 'react';
-import { colors, radius, motion } from '../theme';
+import { colors, radius, motion, shadows } from '../theme';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'accent';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
@@ -25,16 +25,23 @@ export const Button: React.FC<ButtonProps> = ({
     switch (variant) {
       case 'primary':
         return {
-          backgroundColor: colors.primary,
-          color: colors.text,
+          background: `linear-gradient(135deg, ${colors.primary}, ${colors.primaryHover})`,
+          color: '#FFFFFF',
           border: '1px solid transparent',
-          boxShadow: `0 0 12px ${colors.primaryGlow}`,
+          boxShadow: shadows.glowPrimary,
+        };
+      case 'accent':
+        return {
+          background: `linear-gradient(135deg, ${colors.indigo}, #4F46E5)`,
+          color: '#FFFFFF',
+          border: '1px solid transparent',
+          boxShadow: shadows.glowPurple,
         };
       case 'secondary':
         return {
           backgroundColor: colors.surfaceHover,
           color: colors.text,
-          border: `1px solid ${colors.border}`,
+          border: `1px solid ${colors.borderSubtle}`,
         };
       case 'ghost':
         return {
@@ -44,15 +51,15 @@ export const Button: React.FC<ButtonProps> = ({
         };
       case 'danger':
         return {
-          backgroundColor: colors.error,
-          color: colors.text,
+          background: `linear-gradient(135deg, ${colors.error}, #DC2626)`,
+          color: '#FFFFFF',
           border: '1px solid transparent',
-          boxShadow: `0 0 12px ${colors.errorGlow}`,
+          boxShadow: `0 0 16px ${colors.errorGlow}`,
         };
       case 'outline':
         return {
           backgroundColor: 'transparent',
-          color: colors.primary,
+          color: colors.primaryLight,
           border: `1px solid ${colors.primary}`,
         };
     }
@@ -61,12 +68,12 @@ export const Button: React.FC<ButtonProps> = ({
   const getSizeStyles = (): React.CSSProperties => {
     switch (size) {
       case 'sm':
-        return { padding: '6px 12px', fontSize: '0.75rem' };
+        return { padding: '6px 14px', fontSize: '0.78rem' };
       case 'lg':
-        return { padding: '12px 24px', fontSize: '1rem' };
+        return { padding: '12px 28px', fontSize: '1rem' };
       case 'md':
       default:
-        return { padding: '9px 18px', fontSize: '0.875rem' };
+        return { padding: '9px 20px', fontSize: '0.875rem' };
     }
   };
 
@@ -76,7 +83,7 @@ export const Button: React.FC<ButtonProps> = ({
     justifyContent: 'center',
     gap: '8px',
     fontWeight: 600,
-    borderRadius: radius.md,
+    borderRadius: radius.full,
     cursor: disabled || isLoading ? 'not-allowed' : 'pointer',
     opacity: disabled || isLoading ? 0.6 : 1,
     transition: `all ${motion.duration.fast}ms ${motion.easing.standard}`,

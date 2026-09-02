@@ -27,8 +27,8 @@ export const Tabs: React.FC<TabsProps> = ({
         gap: '4px',
         backgroundColor: colors.background,
         padding: '4px',
-        borderRadius: radius.lg,
-        border: `1px solid ${colors.border}`,
+        borderRadius: radius.full,
+        border: `1px solid ${colors.borderSubtle}`,
       }}
       className={`devdepth-tabs ${className}`}
     >
@@ -41,17 +41,17 @@ export const Tabs: React.FC<TabsProps> = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
-              padding: '6px 14px',
-              fontSize: '0.875rem',
+              gap: '8px',
+              padding: '7px 18px',
+              fontSize: '0.85rem',
               fontWeight: isActive ? 600 : 500,
-              borderRadius: radius.md,
+              borderRadius: radius.full,
               color: isActive ? colors.text : colors.muted,
-              backgroundColor: isActive ? colors.surfaceHover : 'transparent',
-              border: 'none',
+              backgroundColor: isActive ? colors.primaryGlow : 'transparent',
+              border: isActive ? `1px solid ${colors.primary}` : '1px solid transparent',
               cursor: 'pointer',
               transition: `all ${motion.duration.fast}ms ${motion.easing.standard}`,
-              boxShadow: isActive ? `0 1px 3px rgba(0,0,0,0.3)` : 'none',
+              boxShadow: isActive ? `0 4px 12px ${colors.primaryGlow}` : 'none',
             }}
           >
             {tab.icon && <span>{tab.icon}</span>}

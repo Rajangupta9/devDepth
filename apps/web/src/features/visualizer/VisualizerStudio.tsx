@@ -59,13 +59,13 @@ export const VisualizerStudio: React.FC = () => {
   const rightPointer = currentEvent.stateSnapshot?.right;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Header Controls & Action Bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#F9FAFB' }}>
-              Data-Driven Visualizer Engine
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <h2 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 800, color: '#F9FAFB', fontFamily: 'Outfit, sans-serif' }}>
+              Visual Lab Studio
             </h2>
             <Badge variant="purple">Binary Search</Badge>
             <Badge variant="info">O(log n)</Badge>
@@ -75,19 +75,31 @@ export const VisualizerStudio: React.FC = () => {
           </p>
         </div>
 
-        {/* Input Target Picker */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '0.875rem', color: '#9CA3AF' }}>Search Target:</span>
+        {/* Search Target Pill Selector */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            backgroundColor: 'rgba(11, 15, 29, 0.8)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '9999px',
+            padding: '6px 16px',
+          }}
+        >
+          <span style={{ fontSize: '0.85rem', color: '#9CA3AF', fontWeight: 500 }}>Target:</span>
           <select
             value={target}
             onChange={(e) => setTarget(Number(e.target.value))}
             style={{
-              padding: '6px 12px',
-              backgroundColor: '#111827',
-              color: '#F9FAFB',
-              border: '1px solid #1F2937',
-              borderRadius: '6px',
-              fontWeight: 600,
+              padding: '4px 10px',
+              backgroundColor: '#111728',
+              color: '#3B82F6',
+              border: '1px solid #3B82F6',
+              borderRadius: '9999px',
+              fontWeight: 700,
+              outline: 'none',
+              cursor: 'pointer',
             }}
           >
             {array.map((num) => (
@@ -100,30 +112,30 @@ export const VisualizerStudio: React.FC = () => {
       </div>
 
       {/* Signature Split View Workspace */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '24px' }}>
         {/* Left Column: Visual Canvas & Step Controller */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {/* Interactive Visual Canvas */}
-          <Card variant="glass" style={{ minHeight: '280px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {/* Interactive Visual Canvas Sheet */}
+          <Card variant="glass" style={{ minHeight: '300px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#9CA3AF' }}>
+              <span style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#9CA3AF', fontWeight: 700 }}>
                 Array State Inspector
               </span>
-              <Badge variant={currentEvent.type === 'VISIT' ? 'easy' : 'info'}>
+              <Badge variant={currentEvent.type === 'VISIT' ? 'easy' : 'primary'}>
                 Event: {currentEvent.type}
               </Badge>
             </div>
 
-            {/* Render Array Elements */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '24px 0' }}>
+            {/* Render Array Tiles */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px', padding: '28px 0' }}>
               {array.map((value, idx) => {
                 const isMid = idx === midPointer;
                 const isLeft = idx === leftPointer;
                 const isRight = idx === rightPointer;
                 const isFound = currentEvent.stateSnapshot?.foundIndex === idx;
 
-                let borderCol = '#1F2937';
-                let bgCol = '#111827';
+                let borderCol = 'rgba(255, 255, 255, 0.1)';
+                let bgCol = '#111728';
                 let textCol = '#F9FAFB';
 
                 if (isFound) {
@@ -131,28 +143,28 @@ export const VisualizerStudio: React.FC = () => {
                   bgCol = 'rgba(16, 185, 129, 0.2)';
                   textCol = '#10B981';
                 } else if (isMid) {
-                  borderCol = '#6366F1';
-                  bgCol = 'rgba(99, 102, 241, 0.2)';
-                  textCol = '#6366F1';
+                  borderCol = '#3B82F6';
+                  bgCol = 'rgba(59, 130, 246, 0.25)';
+                  textCol = '#60A5FA';
                 }
 
                 return (
-                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                    {/* Value Card */}
+                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                    {/* Value Tile */}
                     <div
                       style={{
-                        width: '48px',
-                        height: '56px',
-                        borderRadius: '8px',
+                        width: '52px',
+                        height: '60px',
+                        borderRadius: '12px',
                         backgroundColor: bgCol,
                         border: `2px solid ${borderCol}`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontWeight: 700,
-                        fontSize: '1.1rem',
+                        fontWeight: 800,
+                        fontSize: '1.15rem',
                         color: textCol,
-                        boxShadow: isMid ? '0 0 16px rgba(99, 102, 241, 0.3)' : 'none',
+                        boxShadow: isMid ? '0 0 20px rgba(59, 130, 246, 0.4)' : isFound ? '0 0 20px rgba(16, 185, 129, 0.4)' : 'none',
                         transition: 'all 250ms ease',
                       }}
                     >
@@ -160,10 +172,10 @@ export const VisualizerStudio: React.FC = () => {
                     </div>
 
                     {/* Pointer Labels */}
-                    <div style={{ fontSize: '0.7rem', fontFamily: 'monospace', color: '#9CA3AF', height: '16px' }}>
-                      {isMid && <span style={{ color: '#6366F1', fontWeight: 700 }}>mid</span>}
-                      {isLeft && !isMid && <span style={{ color: '#F59E0B' }}>L</span>}
-                      {isRight && !isMid && <span style={{ color: '#06B6D4' }}>R</span>}
+                    <div style={{ fontSize: '0.72rem', fontFamily: 'monospace', color: '#9CA3AF', height: '18px' }}>
+                      {isMid && <span style={{ color: '#60A5FA', fontWeight: 800 }}>mid</span>}
+                      {isLeft && !isMid && <span style={{ color: '#F59E0B', fontWeight: 700 }}>L</span>}
+                      {isRight && !isMid && <span style={{ color: '#06B6D4', fontWeight: 700 }}>R</span>}
                     </div>
                   </div>
                 );
@@ -171,12 +183,21 @@ export const VisualizerStudio: React.FC = () => {
             </div>
 
             {/* Description Bar */}
-            <div style={{ backgroundColor: '#0B0F19', padding: '12px 16px', borderRadius: '8px', border: '1px solid #1F2937', fontSize: '0.875rem', color: '#D1D5DB' }}>
-              💡 <span style={{ fontWeight: 600, color: '#F9FAFB' }}>Step {stepIndex + 1}:</span> {currentEvent.description}
+            <div
+              style={{
+                backgroundColor: 'rgba(7, 9, 19, 0.9)',
+                padding: '14px 18px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                fontSize: '0.875rem',
+                color: '#D1D5DB',
+              }}
+            >
+              💡 <span style={{ fontWeight: 700, color: '#F9FAFB' }}>Step {stepIndex + 1}:</span> {currentEvent.description}
             </div>
           </Card>
 
-          {/* Timeline Playback Controls */}
+          {/* Timeline Playback Pill Controls */}
           <Card variant="surface">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -218,28 +239,38 @@ export const VisualizerStudio: React.FC = () => {
                 </Button>
               </div>
 
-              <span style={{ fontSize: '0.85rem', color: '#9CA3AF', fontWeight: 600 }}>
+              <span style={{ fontSize: '0.85rem', color: '#9CA3AF', fontWeight: 700 }}>
                 Step {stepIndex + 1} of {events.length}
               </span>
             </div>
           </Card>
         </div>
 
-        {/* Right Column: Code & Variable Inspector */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {/* Right Column: Synchronized Code & Variable State Inspector */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {/* Synchronized Code Highlight */}
           <CodeBlock code={BINARY_SEARCH_CODE} language="python" activeLine={currentEvent.codeLine} />
 
           {/* Real-time State & Variable Table */}
           <Card variant="surface">
-            <h4 style={{ margin: '0 0 12px 0', fontSize: '0.85rem', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <h4 style={{ margin: '0 0 14px 0', fontSize: '0.8rem', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700 }}>
               Variable State Inspector
             </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontFamily: 'monospace', fontSize: '0.85rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontFamily: 'monospace', fontSize: '0.85rem' }}>
               {Object.entries(currentEvent.variables).map(([key, val]) => (
-                <div key={key} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 10px', backgroundColor: '#0B0F19', borderRadius: '6px', border: '1px solid #1F2937' }}>
+                <div
+                  key={key}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    backgroundColor: '#070913',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                  }}
+                >
                   <span style={{ color: '#9CA3AF' }}>{key}</span>
-                  <span style={{ color: typeof val === 'boolean' ? (val ? '#10B981' : '#EF4444') : '#06B6D4', fontWeight: 700 }}>
+                  <span style={{ color: typeof val === 'boolean' ? (val ? '#10B981' : '#EF4444') : '#60A5FA', fontWeight: 700 }}>
                     {String(val)}
                   </span>
                 </div>
