@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Course } from '../../types';
 import { DevDepthAPI } from '../../api/client';
-import { BookOpen, Clock, Layers, Sparkles, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Clock, Layers, CheckCircle2, ChevronRight } from 'lucide-react';
+import { useTheme } from '@devdepth/ui';
 
 interface CourseHubProps {
   onSelectLesson: (lessonId: string) => void;
 }
 
 export const CourseHub: React.FC<CourseHubProps> = ({ onSelectLesson }) => {
+  const { colors } = useTheme();
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [loading, setLoading] = useState<boolean>(true);
@@ -39,14 +41,14 @@ export const CourseHub: React.FC<CourseHubProps> = ({ onSelectLesson }) => {
   ];
 
   return (
-    <div style={{ padding: '32px 24px', maxWidth: '1400px', margin: '0 auto' }}>
+    <div style={{ padding: '8px 0', maxWidth: '1400px', margin: '0 auto' }}>
       {/* Header */}
       <div style={{ marginBottom: '32px' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: '9999px', background: 'var(--primary-glow)', color: 'var(--primary-light)', fontSize: '12px', fontWeight: 600, marginBottom: '12px' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: '9999px', background: colors.primaryGlow, color: colors.primaryLight, fontSize: '12px', fontWeight: 700, marginBottom: '12px' }}>
           <Layers size={14} /> DevDepth Content Engine
         </div>
-        <h1 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px' }}>Interactive Learning Hub</h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: '16px' }}>
+        <h1 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px', color: colors.text }}>Interactive Learning Hub</h1>
+        <p style={{ color: colors.muted, fontSize: '16px' }}>
           Schema-driven interactive courses across CS fundamentals. Every concept connects to a live visual state machine.
         </p>
       </div>
@@ -58,11 +60,11 @@ export const CourseHub: React.FC<CourseHubProps> = ({ onSelectLesson }) => {
             key={cat.id}
             onClick={() => setSelectedCategory(cat.id)}
             style={{
-              padding: '8px 16px',
+              padding: '8px 18px',
               borderRadius: '9999px',
-              border: selectedCategory === cat.id ? '1px solid var(--border-active)' : '1px solid rgba(255, 255, 255, 0.08)',
-              background: selectedCategory === cat.id ? 'var(--primary-glow)' : 'rgba(255, 255, 255, 0.04)',
-              color: selectedCategory === cat.id ? 'var(--primary-light)' : 'var(--text-muted)',
+              border: selectedCategory === cat.id ? `1px solid ${colors.primary}` : `1px solid ${colors.borderSubtle}`,
+              background: selectedCategory === cat.id ? colors.primaryGlow : colors.surface,
+              color: selectedCategory === cat.id ? colors.primaryLight : colors.muted,
               fontWeight: 600,
               fontSize: '14px',
               cursor: 'pointer',
@@ -77,7 +79,7 @@ export const CourseHub: React.FC<CourseHubProps> = ({ onSelectLesson }) => {
 
       {/* Main Course Content */}
       {loading ? (
-        <div className="glass-panel" style={{ padding: '48px', textAlign: 'center', color: 'var(--text-muted)' }}>
+        <div className="glass-panel" style={{ padding: '48px', textAlign: 'center', color: colors.muted }}>
           Loading DevDepth courses from Go Backend API...
         </div>
       ) : (
@@ -94,17 +96,17 @@ export const CourseHub: React.FC<CourseHubProps> = ({ onSelectLesson }) => {
                   style={{
                     padding: '20px',
                     cursor: 'pointer',
-                    borderColor: isSelected ? 'var(--border-active)' : undefined,
-                    background: isSelected ? 'var(--bg-card-hover)' : undefined,
+                    borderColor: isSelected ? colors.primary : undefined,
+                    background: isSelected ? colors.surfaceHover : undefined,
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <span className="badge badge-primary">{course.category.toUpperCase()}</span>
-                    <span style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 500 }}>{course.level}</span>
+                    <span style={{ fontSize: '12px', color: colors.subtle, fontWeight: 500 }}>{course.level}</span>
                   </div>
-                  <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '6px' }}>{course.title}</h3>
-                  <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px' }}>{course.description}</p>
-                  <div style={{ fontSize: '12px', color: 'var(--accent-cyan)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '6px', color: colors.text }}>{course.title}</h3>
+                  <p style={{ fontSize: '13px', color: colors.muted, marginBottom: '12px' }}>{course.description}</p>
+                  <div style={{ fontSize: '12px', color: colors.cyan, fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
                     {course.modules.length} Modules Available <ChevronRight size={14} />
                   </div>
                 </div>
@@ -115,20 +117,20 @@ export const CourseHub: React.FC<CourseHubProps> = ({ onSelectLesson }) => {
           {/* Right Column: Selected Course Detail & Modules */}
           {activeCourse && (
             <div className="glass-panel" style={{ padding: '28px' }}>
-              <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '20px', marginBottom: '24px' }}>
+              <div style={{ borderBottom: `1px solid ${colors.borderSubtle}`, paddingBottom: '20px', marginBottom: '24px' }}>
                 <span className="badge badge-primary" style={{ marginBottom: '8px' }}>{activeCourse.category.toUpperCase()}</span>
-                <h2 style={{ fontSize: '26px', fontWeight: 800, marginBottom: '8px' }}>{activeCourse.title}</h2>
-                <p style={{ color: 'var(--text-muted)', fontSize: '15px' }}>{activeCourse.description}</p>
+                <h2 style={{ fontSize: '26px', fontWeight: 800, marginBottom: '8px', color: colors.text }}>{activeCourse.title}</h2>
+                <p style={{ color: colors.muted, fontSize: '15px' }}>{activeCourse.description}</p>
               </div>
 
               {/* Modules & Lessons List */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {activeCourse.modules.map((mod, idx) => (
-                  <div key={mod.id} style={{ background: 'rgba(255, 255, 255, 0.02)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                    <div style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px' }}>
+                  <div key={mod.id} style={{ background: colors.background, borderRadius: 'var(--radius-md)', padding: '16px', border: `1px solid ${colors.borderSubtle}` }}>
+                    <div style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px', color: colors.text }}>
                       Module {idx + 1}: {mod.title}
                     </div>
-                    <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                    <div style={{ fontSize: '13px', color: colors.muted, marginBottom: '16px' }}>
                       {mod.description}
                     </div>
 
@@ -142,21 +144,21 @@ export const CourseHub: React.FC<CourseHubProps> = ({ onSelectLesson }) => {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             padding: '12px 16px',
-                            background: 'var(--bg-card)',
+                            background: colors.surface,
                             borderRadius: 'var(--radius-sm)',
-                            border: '1px solid var(--border-color)',
+                            border: `1px solid ${colors.borderSubtle}`,
                           }}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <CheckCircle2 size={18} color="var(--accent-emerald)" />
+                            <CheckCircle2 size={18} color={colors.success} />
                             <div>
-                              <div style={{ fontWeight: 600, fontSize: '14px' }}>{les.title}</div>
-                              <div style={{ fontSize: '12px', color: 'var(--text-dim)', display: 'flex', gap: '12px', marginTop: '2px' }}>
+                              <div style={{ fontWeight: 600, fontSize: '14px', color: colors.text }}>{les.title}</div>
+                              <div style={{ fontSize: '12px', color: colors.subtle, display: 'flex', gap: '12px', marginTop: '2px' }}>
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                                   <Clock size={12} /> {les.estimated_mins} mins
                                 </span>
                                 {les.visualizer_id && (
-                                  <span style={{ color: 'var(--accent-cyan)', fontWeight: 600 }}>
+                                  <span style={{ color: colors.cyan, fontWeight: 600 }}>
                                     • Interactive Visual Lab
                                   </span>
                                 )}
