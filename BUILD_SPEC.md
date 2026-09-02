@@ -12,8 +12,8 @@ To ensure DevDepth remains scalable from 10 features to 500 features without cod
 - **One Central Icon Abstraction (`packages/ui/icons`)**: Single application-wide icon system wrapping Lucide icons. No random emojis or manually installed ad-hoc icon libraries across features.
 - **One Reusable Page Shell (`AppShell`)**: All views render inside a standard shell with consistent topbar, sidebar, page header, and content areas.
 - **Anonymous Identity in V1 (Zero Friction)**: No login/signup wall for V1. Browser auto-generates a persistent anonymous identifier mapped to PostgreSQL `users`. All user state (`progress`, `submissions`, `bookmarks`, `notes`, `mastery`) attaches to `user_id` so auth can be enabled later with zero database refactoring.
-- **Strict Go Backend Architecture**: Handler → Service → Repository → PostgreSQL using standardized API response envelopes.
-- **Data-Driven Visualization Engine**: Standardized event protocol (`READ`, `COMPARE`, `MOVE_POINTER`, `SWAP`, `VISIT`, `WRITE`) decoupled from UI rendering.
+- **`pgkit` Database Toolkit (`github.com/rajangupta9/pgkit`)**: Standardized data access layer using `pgkit/db` (connection pool, typed generic scanner `QueryInto[T]`, transactions `WithTx`, `WithRetryTx`) and `pgkit/qb` (fluid PostgreSQL query builder).
+- **`gopkg` Infrastructure Foundation (`github.com/Rajangupta9/gopkg`)**: Standardized HTTP router specs (`gopkgHttp.LoadAPIs`), Argon2id password security (`gopkgAuth.HashPassword`), HS256 JWT token issuance (`gopkgAuth.IssueAccessToken`), and route protection (`middleware.EnsureAuth`).
 
 ---
 
@@ -29,7 +29,7 @@ To ensure DevDepth remains scalable from 10 features to 500 features without cod
               │                             ┌───────────────┼───────────────┐
               │                             │               │               │
         Design System                   Services        Repos         Middleware
-       (packages/ui)                        │               │               │
+       (packages/ui)                        │        (pgkit/db)       (gopkg/middleware)
               │                             └───────┬───────┘               │
        ┌──────┴──────┐                              │                       │
        │             │                          PostgreSQL                  │
@@ -69,52 +69,38 @@ packages/ui/
 │   ├── Modal.tsx      # Reusable dialog overlays
 │   ├── AuthModal.tsx  # Split-card login/signup modal (VOICE AURA style)
 │   ├── Tabs.tsx       # Section switcher tabs
-│   ├── Progress.tsx   # Progress bars & circular indicators
-│   ├── CodeBlock.tsx  # Syntax-highlighted code container
-│   └── index.ts
-│
-└── index.ts
+   ├── Progress.tsx   # Progress bars & circular indicators
+   ├── CodeBlock.tsx  # Syntax-highlighted code container
+   └── index.ts
 ```
 
 ---
 
-## 2. Icon Standardization Protocol (`packages/ui/icons`)
+## 2. PostgreSQL & Query Builder Engine (`github.com/rajangupta9/pgkit`)
 
-All icons across DevDepth must be rendered using the central `<Icon>` or `<FeatureIcon>` wrappers:
+All data layer repositories in `apps/api/internal/*/repository.go` must use `pgkit`:
+- **`pgkit/db`**: Connection pooling (`db.New`, `db.NamedPool`), generic scanning (`db.QueryInto[T]`), transaction blocks (`WithTx`, `WithRetryTx`), batching (`db.SendWrite`), error classification (`db.IsUniqueViolation`, `db.IsForeignKeyViolation`).
+- **`pgkit/qb`**: Fluid chainable SQL query builder (`client.QB(table)`, `qb.Where("col", qb.OpEq, val)`, `qb.OrderBy`, `qb.Limit`, `qb.OnConflict`).
 
-```tsx
-import { Icon, FeatureIcon } from "@devdepth/ui";
-
-// Rendering standard Lucide icon
-<Icon name="database" size={18} color="var(--primary)" />
-
-// Rendering semantic CS domain feature icon
-<FeatureIcon feature="networking" size={18} />
-```
-
-### Semantic CS Domain Mapping
-```ts
-export const featureIconMap = {
-  dsa: 'binary',
-  algorithms: 'gitBranch',
-  networking: 'network',
-  operatingSystems: 'cpu',
-  databases: 'database',
-  systemDesign: 'layers',
-  debugging: 'bug',
-  coding: 'terminal',
-  analytics: 'barChart',
-  interview: 'messageSquare',
-  visualizer: 'zap',
-  courses: 'bookOpen',
-  practice: 'code',
-  api: 'server',
-};
+```go
+// Example pgkit usage inside DevDepth repository:
+users, err := db.QueryInto[User](ctx, r.client, 
+    r.client.QB("users").Where(qb.Where("email", qb.OpEq, email)),
+)
 ```
 
 ---
 
-## 3. Reusable Page Structure (`AppShell`)
+## 3. Infrastructure & Middleware Foundation (`github.com/Rajangupta9/gopkg`)
+
+All HTTP handlers and route specifications consume `gopkg`:
+- **`gopkg/pkg/auth`**: Argon2id password hashing (`gopkgAuth.HashPassword`), HS256 JWT access tokens (`gopkgAuth.IssueAccessToken`).
+- **`gopkg/pkg/middleware`**: Structured logging (`middleware.Logging`), panic recovery (`middleware.RecoveryAndClean`), CORS (`middleware.CORS`), and route protection (`middleware.ConfigureAuth` & `middleware.EnsureAuth`).
+- **`gopkg/pkg/http`**: Standardized response envelopes (`gopkgHttp.Success`, `gopkgHttp.BadRequest`, `gopkgHttp.Unauthorized`) and route loaders (`gopkgHttp.LoadOpenAPIs` for public routes, `gopkgHttp.LoadAPIs` for authenticated routes).
+
+---
+
+## 4. Reusable Page Structure (`AppShell`)
 
 Every page in DevDepth inherits from `AppShell`:
 
@@ -131,7 +117,7 @@ AppShell
 
 ---
 
-## 4. V1 Anonymous User Identity & Auth System
+## 5. V1 Anonymous User Identity & Auth System
 
 1. **Client Generation**: On initial load, frontend generates `anon_...` identifier saved in `localStorage`.
 2. **Auto Registration**: Sent via header `X-Anonymous-ID` on request to Go API.
@@ -139,7 +125,7 @@ AppShell
 
 ---
 
-## 5. PostgreSQL Source of Truth Schema
+## 6. PostgreSQL Source of Truth Schema
 
 ```text
 PostgreSQL
@@ -169,35 +155,6 @@ PostgreSQL
 
 ---
 
-## 6. Standardized Go Backend Architecture (`apps/api`)
-
-Every feature module inside `apps/api/internal/<feature>/` enforces clean 4-layer isolation:
-
-```text
-HTTP Request → Handler → Service → Repository → PostgreSQL
-```
-
----
-
-## 7. Data-Driven Visualization Engine Protocol
-
-Visualizations produce a standardized event stream rather than custom canvas components per feature:
-
-```typescript
-export type VisualEventType = 
-  | 'READ' 
-  | 'COMPARE' 
-  | 'MOVE_POINTER' 
-  | 'SWAP' 
-  | 'VISIT' 
-  | 'WRITE' 
-  | 'PUSH' 
-  | 'POP'
-  | 'PACKET_TRANSMIT';
-```
-
----
-
 ## Summary of Core Development Rules
 
 1. **One Icon Library**: All icons consume `@devdepth/ui` (`<Icon>` or `<FeatureIcon>`). No random emojis or third-party icon imports inside feature code.
@@ -205,3 +162,5 @@ export type VisualEventType =
 3. **One Component System**: `packages/ui/components` contains all standard UI components.
 4. **One Motion System**: `packages/ui/theme/motion.ts` defines duration and easing curves.
 5. **One Set of Page Shell Patterns**: `AppShell` handles navigation, headers, theme toggles, and user badges.
+6. **Standardized Database Engine**: All Go data repositories consume `github.com/rajangupta9/pgkit` (`db` and `qb`).
+7. **Standardized Infrastructure Engine**: All Go handlers & middleware consume `github.com/Rajangupta9/gopkg` (`http`, `auth`, `middleware`, `logger`).
