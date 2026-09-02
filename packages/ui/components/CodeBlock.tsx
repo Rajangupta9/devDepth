@@ -29,7 +29,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
       <div
         style={{
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           padding: '6px 12px',
           backgroundColor: colors.surface,
           borderBottom: `1px solid ${colors.border}`,

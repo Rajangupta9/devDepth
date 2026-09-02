@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@devdepth/ui": ["packages/ui/index.ts"],
+      "react": ["apps/web/node_modules/@types/react"],
+      "react-dom": ["apps/web/node_modules/@types/react-dom"]
+    }
+  },
+  "references": [
+    { "path": "./apps/web" },
+    { "path": "./packages/ui" }
+  ]
+}
