@@ -2,10 +2,11 @@ package auth
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
-	"fmt"
+	"os"
+	"strconv"
+	"time"
 
+	gopkgAuth "github.com/Rajangupta9/gopkg/pkg/auth"
 	appErrors "github.com/Rajangupta9/gopkg/pkg/utils/errors"
 	"github.com/Rajangupta9/gopkg/pkg/utils/validation"
 )
@@ -17,11 +18,20 @@ type Service interface {
 }
 
 type service struct {
-	repo Repository
+	repo   Repository
+	jwtCfg gopkgAuth.JWTConfig
 }
 
 func NewService(repo Repository) Service {
-	return &service{repo: repo}
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		secret = "devdepth_gopkg_auth_jwt_secret_2026_super_secure_98765"
+	}
+	jwtCfg := gopkgAuth.DefaultJWTConfig([]byte(secret), "devdepth-api")
+	return &service{
+		repo:   repo,
+		jwtCfg: jwtCfg,
+	}
 }
 
 func (s *service) Register(ctx context.Context, req RegisterRequest) (*AuthResponse, error) {
@@ -38,7 +48,11 @@ func (s *service) Register(ctx context.Context, req RegisterRequest) (*AuthRespo
 		return nil, appErrors.New(appErrors.ErrCodeValidation, "User with this email already exists")
 	}
 
-	hashedPassword := hashPassword(req.Password)
+	hashedPassword, err := gopkgAuth.HashPassword(req.Password, gopkgAuth.DefaultArgon2idParams)
+	if err != nil {
+		return nil, appErrors.InternalError("Failed to secure password")
+	}
+
 	role := "learner"
 	if req.Goal == "" {
 		req.Goal = "dsa"
@@ -56,10 +70,23 @@ func (s *service) Register(ctx context.Context, req RegisterRequest) (*AuthRespo
 		return nil, appErrors.DatabaseError(err)
 	}
 
-	token := generateMockToken(user.ID)
+	accountID, _ := strconv.ParseInt(user.ID, 10, 64)
+	if accountID == 0 {
+		accountID = time.Now().UnixNano()
+	}
+
+	token, exp, err := gopkgAuth.IssueAccessToken(s.jwtCfg, accountID, 0, gopkgAuth.SubjectRoot, time.Now())
+	if err != nil {
+		return nil, appErrors.InternalError("Failed to issue access token")
+	}
+
+	expiresIn := int64(time.Until(exp).Seconds())
+
 	return &AuthResponse{
-		Token: token,
-		User:  user,
+		Token:     token,
+		TokenType: "Bearer",
+		ExpiresIn: expiresIn,
+		User:      user,
 	}, nil
 }
 
@@ -73,14 +100,28 @@ func (s *service) Login(ctx context.Context, req LoginRequest) (*AuthResponse, e
 		return nil, appErrors.UnauthorizedError("Invalid credentials")
 	}
 
-	if user.PasswordHash != hashPassword(req.Password) {
+	valid, err := gopkgAuth.VerifyPassword(req.Password, user.PasswordHash)
+	if err != nil || !valid {
 		return nil, appErrors.UnauthorizedError("Invalid credentials")
 	}
 
-	token := generateMockToken(user.ID)
+	accountID, _ := strconv.ParseInt(user.ID, 10, 64)
+	if accountID == 0 {
+		accountID = time.Now().UnixNano()
+	}
+
+	token, exp, err := gopkgAuth.IssueAccessToken(s.jwtCfg, accountID, 0, gopkgAuth.SubjectRoot, time.Now())
+	if err != nil {
+		return nil, appErrors.InternalError("Failed to issue access token")
+	}
+
+	expiresIn := int64(time.Until(exp).Seconds())
+
 	return &AuthResponse{
-		Token: token,
-		User:  user,
+		Token:     token,
+		TokenType: "Bearer",
+		ExpiresIn: expiresIn,
+		User:      user,
 	}, nil
 }
 
@@ -90,14 +131,4 @@ func (s *service) GetUserByID(ctx context.Context, id string) (*User, error) {
 		return nil, appErrors.NotFoundError("User not found")
 	}
 	return user, nil
-}
-
-func hashPassword(password string) string {
-	h := sha256.New()
-	h.Write([]byte(password))
-	return hex.EncodeToString(h.Sum(nil))
-}
-
-func generateMockToken(userID string) string {
-	return fmt.Sprintf("devdepth_jwt_%s_token", userID)
 }

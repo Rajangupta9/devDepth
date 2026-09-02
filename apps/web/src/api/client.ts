@@ -2,11 +2,30 @@ import { Course, Problem, Submission, RunResult } from '../types';
 
 const BASE_URL = 'http://localhost:8080';
 
+export function getAuthToken(): string | null {
+  return localStorage.getItem('devdepth_auth_token');
+}
+
+export function setAuthToken(token: string) {
+  localStorage.setItem('devdepth_auth_token', token);
+}
+
+export function clearAuthToken() {
+  localStorage.removeItem('devdepth_auth_token');
+}
+
 async function fetchJson<T>(endpoint: string, options?: RequestInit): Promise<{ success: boolean; data?: T; error?: string }> {
   try {
+    const token = getAuthToken();
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+    };
+
     const res = await fetch(`${BASE_URL}${endpoint}`, {
       headers: {
-        'Content-Type': 'application/json',
+        ...headers,
+        ...(options?.headers || {}),
       },
       ...options,
     });
@@ -23,6 +42,28 @@ async function fetchJson<T>(endpoint: string, options?: RequestInit): Promise<{ 
 export const DevDepthAPI = {
   async getHealth() {
     return fetchJson<{ status: string; service: string; engine: string }>('/health');
+  },
+
+  async register(data: { email: string; password: string; full_name: string; goal?: string }) {
+    const res = await fetchJson<{ token: string; token_type: string; expires_in: number; user: any }>('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    if (res.success && res.data?.token) {
+      setAuthToken(res.data.token);
+    }
+    return res;
+  },
+
+  async login(data: { email: string; password: string }) {
+    const res = await fetchJson<{ token: string; token_type: string; expires_in: number; user: any }>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    if (res.success && res.data?.token) {
+      setAuthToken(res.data.token);
+    }
+    return res;
   },
 
   async getCourses(category?: string) {

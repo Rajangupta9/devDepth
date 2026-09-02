@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	gopkgAuth "github.com/Rajangupta9/gopkg/pkg/auth"
 	gopkgHttp "github.com/Rajangupta9/gopkg/pkg/http"
 	"github.com/Rajangupta9/gopkg/pkg/middleware"
 	"github.com/Rajangupta9/gopkg/pkg/utils/logger"
@@ -29,7 +30,15 @@ func main() {
 		"version":  "1.0.0",
 		"env":      "development",
 		"database": "PostgreSQL (pgkit)",
+		"auth":     "github.com/Rajangupta9/gopkg/pkg/auth (Argon2id + HS256 JWT)",
 	})
+
+	// Configure gopkg middleware authentication
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		secret = "devdepth_gopkg_auth_jwt_secret_2026_super_secure_98765"
+	}
+	middleware.ConfigureAuth(secret, gopkgAuth.NewClaims)
 
 	// Initialize PostgreSQL Client via github.com/rajangupta9/pgkit/db if DATABASE_URL is set
 	var pgClient *db.Client
@@ -116,5 +125,6 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 		"service":  "DevDepth Backend API",
 		"engine":   "Content + Visual + Practice Engine",
 		"database": "PostgreSQL (github.com/rajangupta9/pgkit)",
+		"auth":     "github.com/Rajangupta9/gopkg/pkg/auth (Argon2id + HS256 JWT)",
 	})
 }

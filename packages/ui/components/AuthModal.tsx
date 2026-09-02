@@ -36,27 +36,37 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setErrorMsg('');
 
     try {
-      const endpoint = authMode === 'signup' ? '/api/auth/register' : '/api/auth/login';
+      const endpoint = authMode === 'signup' 
+        ? 'http://localhost:8080/auth/register' 
+        : 'http://localhost:8080/auth/login';
+
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email,
+          password,
+          full_name: email.split('@')[0],
+          goal: 'dsa',
+        }),
       });
-      const data = await res.json();
 
-      if (data.success || res.ok) {
+      const responseData = await res.json();
+
+      if (res.ok && (responseData.success || responseData.data?.token)) {
+        const token = responseData.data?.token || responseData.token;
+        if (token) {
+          localStorage.setItem('devdepth_auth_token', token);
+        }
         if (onSuccess) {
           onSuccess({ email, name: email.split('@')[0] });
         }
         onClose();
       } else {
-        setErrorMsg(data.error?.message || data.message || 'Authentication failed');
+        setErrorMsg(responseData.error || responseData.message || 'Authentication failed');
       }
     } catch (err: any) {
-      if (onSuccess) {
-        onSuccess({ email, name: email.split('@')[0] });
-      }
-      onClose();
+      setErrorMsg(err.message || 'Failed to connect to authentication server');
     } finally {
       setIsLoading(false);
     }

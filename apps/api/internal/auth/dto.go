@@ -13,6 +13,8 @@ type LoginRequest struct {
 }
 
 type AuthResponse struct {
-	Token string `json:"token"`
-	User  *User  `json:"user"`
+	Token     string `json:"token"`
+	TokenType string `json:"token_type"`
+	ExpiresIn int64  `json:"expires_in"`
+	User      *User  `json:"user"`
 }
