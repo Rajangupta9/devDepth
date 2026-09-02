@@ -27,13 +27,14 @@ func main() {
 	// Initialize structured logger from gopkg/pkg/utils/logger
 	logger.InitLogger(nil, nil, "")
 	logger.Info(ctx, "Starting DevDepth API Server", map[string]interface{}{
-		"version":  "1.0.0",
-		"env":      "development",
-		"database": "PostgreSQL (pgkit)",
-		"auth":     "github.com/Rajangupta9/gopkg/pkg/auth (Argon2id + HS256 JWT)",
+		"version":    "1.0.0",
+		"env":        "development",
+		"database":   "PostgreSQL (pgkit)",
+		"auth":       "github.com/Rajangupta9/gopkg/pkg/auth (Argon2id + HS256 JWT)",
+		"middleware": "github.com/Rajangupta9/gopkg/pkg/middleware (EnsureAuth via gopkgHttp.LoadAPIs)",
 	})
 
-	// Configure gopkg middleware authentication
+	// Configure gopkg middleware authentication directly from gopkg/pkg/middleware
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
 		secret = "devdepth_gopkg_auth_jwt_secret_2026_super_secure_98765"
@@ -94,7 +95,6 @@ func main() {
 		{Method: "POST", Path: "/users/anonymous", Handler: userHandler.GetOrCreateAnonymous},
 		{Method: "POST", Path: "/auth/register", Handler: authHandler.Register},
 		{Method: "POST", Path: "/auth/login", Handler: authHandler.Login},
-		{Method: "GET", Path: "/auth/profile", Handler: authHandler.GetProfile},
 		{Method: "GET", Path: "/courses", Handler: courseHandler.List},
 		{Method: "GET", Path: "/courses/detail", Handler: courseHandler.GetBySlug},
 		{Method: "GET", Path: "/problems", Handler: probHandler.List},
@@ -105,6 +105,13 @@ func main() {
 	}
 
 	gopkgHttp.LoadOpenAPIs(openRoutes, mux)
+
+	// Define Protected API Routes (automatically wrapped with gopkg middleware.EnsureAuth)
+	protectedRoutes := []gopkgHttp.RouteSpec{
+		{Method: "GET", Path: "/auth/profile", Handler: authHandler.GetProfile},
+	}
+
+	gopkgHttp.LoadAPIs(protectedRoutes, mux)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -121,10 +128,11 @@ func main() {
 
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	gopkgHttp.Success(w, map[string]interface{}{
-		"status":   "healthy",
-		"service":  "DevDepth Backend API",
-		"engine":   "Content + Visual + Practice Engine",
-		"database": "PostgreSQL (github.com/rajangupta9/pgkit)",
-		"auth":     "github.com/Rajangupta9/gopkg/pkg/auth (Argon2id + HS256 JWT)",
+		"status":     "healthy",
+		"service":    "DevDepth Backend API",
+		"engine":     "Content + Visual + Practice Engine",
+		"database":   "PostgreSQL (github.com/rajangupta9/pgkit)",
+		"auth":       "github.com/Rajangupta9/gopkg/pkg/auth (Argon2id + HS256 JWT)",
+		"middleware": "github.com/Rajangupta9/gopkg/pkg/middleware (EnsureAuth via gopkgHttp.LoadAPIs)",
 	})
 }
