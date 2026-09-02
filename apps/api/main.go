@@ -17,6 +17,7 @@ import (
 	"devdepth/api/internal/courses"
 	"devdepth/api/internal/problems"
 	"devdepth/api/internal/submissions"
+	"devdepth/api/internal/users"
 )
 
 func main() {
@@ -58,6 +59,10 @@ func main() {
 	mux.Use(middleware.CORS(middleware.DefaultCORSConfig()))
 
 	// Instantiate Feature Layer Repositories, Services, and Handlers with pgkit Client
+	userRepo := users.NewRepository(pgClient)
+	userService := users.NewService(userRepo)
+	userHandler := users.NewHandler(userService)
+
 	authRepo := auth.NewRepository(pgClient)
 	authService := auth.NewService(authRepo)
 	authHandler := auth.NewHandler(authService)
@@ -77,6 +82,7 @@ func main() {
 	// Define Open (Public) API Routes using gopkg RouteSpec
 	openRoutes := []gopkgHttp.RouteSpec{
 		{Method: "GET", Path: "/health", Handler: healthCheckHandler},
+		{Method: "POST", Path: "/users/anonymous", Handler: userHandler.GetOrCreateAnonymous},
 		{Method: "POST", Path: "/auth/register", Handler: authHandler.Register},
 		{Method: "POST", Path: "/auth/login", Handler: authHandler.Login},
 		{Method: "GET", Path: "/auth/profile", Handler: authHandler.GetProfile},

@@ -14,9 +14,16 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Path aliases */
+    "baseUrl": ".",
+    "paths": {
+      "@devdepth/ui": ["../../packages/ui/index.ts"],
+      "@/*": ["src/*"]
+    },
+
     /* Linting */
     "strict": false,
     "noImplicitAny": false
   },
-  "include": ["src"]
+  "include": ["src", "../../packages/ui/**/*"]
 }
