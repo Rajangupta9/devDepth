@@ -1,5 +1,6 @@
 import React from 'react';
-import { colors, radius } from '../theme';
+import { radius } from '../theme';
+import { useTheme } from '../theme/ThemeContext';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: 'easy' | 'medium' | 'hard' | 'info' | 'purple' | 'muted' | 'primary';
@@ -14,6 +15,8 @@ export const Badge: React.FC<BadgeProps> = ({
   style,
   ...props
 }) => {
+  const { colors } = useTheme();
+
   const getVariantStyles = (): React.CSSProperties => {
     switch (variant) {
       case 'easy':

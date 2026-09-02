@@ -1,5 +1,6 @@
 import React from 'react';
-import { colors, radius, typography } from '../theme';
+import { radius, typography } from '../theme';
+import { useTheme } from '../theme/ThemeContext';
 
 export interface CodeBlockProps {
   code: string;
@@ -12,6 +13,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   language = 'python',
   activeLine,
 }) => {
+  const { colors } = useTheme();
   const lines = code.trim().split('\n');
 
   return (
@@ -19,7 +21,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
       style={{
         backgroundColor: colors.codeBg,
         borderRadius: radius.md,
-        border: `1px solid ${colors.border}`,
+        border: `1px solid ${colors.borderSubtle}`,
         fontFamily: typography.fontFamily.mono,
         fontSize: '0.85rem',
         lineHeight: 1.6,
@@ -30,11 +32,13 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          padding: '6px 12px',
+          padding: '8px 14px',
           backgroundColor: colors.surface,
-          borderBottom: `1px solid ${colors.border}`,
+          borderBottom: `1px solid ${colors.borderSubtle}`,
           fontSize: '0.75rem',
           color: colors.muted,
+          fontWeight: 700,
+          letterSpacing: '0.04em',
         }}
       >
         <span>{language.toUpperCase()}</span>
@@ -50,14 +54,14 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
               style={{
                 display: 'flex',
                 padding: '0 16px',
-                backgroundColor: isActive ? 'rgba(99, 102, 241, 0.15)' : 'transparent',
+                backgroundColor: isActive ? 'rgba(99, 102, 241, 0.2)' : 'transparent',
                 borderLeft: isActive ? `3px solid ${colors.primary}` : '3px solid transparent',
               }}
             >
               <span
                 style={{
                   width: '32px',
-                  color: isActive ? colors.primary : colors.subtle,
+                  color: isActive ? colors.primaryLight : colors.subtle,
                   userSelect: 'none',
                   flexShrink: 0,
                   fontSize: '0.75rem',

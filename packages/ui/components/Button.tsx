@@ -1,5 +1,6 @@
 import React from 'react';
-import { colors, radius, motion, shadows } from '../theme';
+import { radius, motion, shadows } from '../theme';
+import { useTheme } from '../theme/ThemeContext';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'accent';
@@ -21,6 +22,8 @@ export const Button: React.FC<ButtonProps> = ({
   style,
   ...props
 }) => {
+  const { mode, colors } = useTheme();
+
   const getVariantStyles = (): React.CSSProperties => {
     switch (variant) {
       case 'primary':

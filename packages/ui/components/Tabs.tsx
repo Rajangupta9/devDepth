@@ -1,5 +1,6 @@
 import React from 'react';
-import { colors, radius, motion } from '../theme';
+import { radius, motion } from '../theme';
+import { useTheme } from '../theme/ThemeContext';
 
 export interface TabItem {
   id: string;
@@ -20,6 +21,8 @@ export const Tabs: React.FC<TabsProps> = ({
   onChange,
   className = '',
 }) => {
+  const { colors } = useTheme();
+
   return (
     <div
       style={{

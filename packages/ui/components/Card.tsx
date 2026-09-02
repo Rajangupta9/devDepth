@@ -1,5 +1,6 @@
 import React from 'react';
-import { colors, radius, shadows, motion } from '../theme';
+import { radius, shadows, motion } from '../theme';
+import { useTheme } from '../theme/ThemeContext';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'surface' | 'glass' | 'outline' | 'glow';
@@ -14,6 +15,8 @@ export const Card: React.FC<CardProps> = ({
   style,
   ...props
 }) => {
+  const { mode, colors } = useTheme();
+
   const getVariantStyles = (): React.CSSProperties => {
     switch (variant) {
       case 'glass':
@@ -22,7 +25,7 @@ export const Card: React.FC<CardProps> = ({
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           border: `1px solid ${colors.borderSubtle}`,
-          boxShadow: shadows.lg,
+          boxShadow: mode === 'light' ? '0 10px 30px -10px rgba(0, 0, 0, 0.05)' : shadows.lg,
         };
       case 'glow':
         return {
@@ -40,6 +43,7 @@ export const Card: React.FC<CardProps> = ({
         return {
           backgroundColor: colors.surface,
           border: `1px solid ${colors.borderSubtle}`,
+          boxShadow: mode === 'light' ? '0 4px 12px rgba(0, 0, 0, 0.03)' : 'none',
         };
     }
   };
@@ -48,7 +52,7 @@ export const Card: React.FC<CardProps> = ({
     borderRadius: radius.lg,
     padding: '22px',
     color: colors.text,
-    transition: interactive ? `transform ${motion.duration.fast}ms ${motion.easing.standard}, border-color ${motion.duration.fast}ms ${motion.easing.standard}, box-shadow ${motion.duration.fast}ms ${motion.easing.standard}` : 'none',
+    transition: `all ${motion.duration.fast}ms ${motion.easing.standard}`,
     cursor: interactive ? 'pointer' : 'default',
     ...getVariantStyles(),
     ...style,
