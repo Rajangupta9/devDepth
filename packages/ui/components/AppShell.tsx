@@ -44,310 +44,214 @@ export const AppShell: React.FC<AppShellProps> = ({
     <div
       style={{
         display: 'flex',
-        height: '100vh',
+        flexDirection: 'column',
+        minHeight: '100vh',
         width: '100vw',
         backgroundColor: colors.background,
         color: colors.text,
-        overflow: 'hidden',
+        overflowX: 'hidden',
         fontFamily: 'Inter, system-ui, sans-serif',
-        position: 'relative',
         transition: 'background-color 250ms ease, color 250ms ease',
       }}
     >
-      {/* Outer Blueprint Layout Container */}
-      <div
+      {/* Top Navbar Navigation Bar (AlgoMaster Style) */}
+      <header
         style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: zIndex.sticky,
+          backgroundColor: isDark ? 'rgba(11, 15, 25, 0.85)' : 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          borderBottom: `1px solid ${colors.borderSubtle}`,
+          height: '64px',
           display: 'flex',
-          width: '100%',
-          height: '100%',
-          padding: '16px',
-          gap: '16px',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 28px',
         }}
       >
-        {/* Floating Sidebar Navigation Sheet */}
-        <aside
-          style={{
-            width: '260px',
-            backgroundColor: colors.surfaceGlass,
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: `1px solid ${colors.borderSubtle}`,
-            borderRadius: radius['2xl'],
-            boxShadow: shadows.xl,
-            display: 'flex',
-            flexDirection: 'column',
-            flexShrink: 0,
-            overflow: 'hidden',
-            transition: 'all 250ms ease',
-          }}
-        >
-          {/* Brand Header */}
-          <div
-            style={{
-              padding: '24px 20px',
-              borderBottom: `1px solid ${colors.borderSubtle}`,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}
-          >
-            <div
-              style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: radius.md,
-                background: `linear-gradient(135deg, ${colors.primary}, ${colors.indigo})`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#FFF',
-                boxShadow: shadows.glowPrimary,
-              }}
-            >
-              <Icon name="sparkles" size={20} color="#FFFFFF" />
-            </div>
-            <div>
-              <div style={{ fontWeight: 800, fontSize: '1.15rem', letterSpacing: '-0.03em', color: colors.text, fontFamily: 'Outfit, sans-serif' }}>
-                DevDepth
-              </div>
-              <div style={{ fontSize: '0.72rem', color: colors.muted, fontWeight: 500 }}>
-                Learn • Visualize • Practice
-              </div>
-            </div>
-          </div>
-
-          {/* Navigation Items */}
-          <nav style={{ padding: '16px 12px', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            {navItems.map((item) => {
-              const isActive = item.id === activeNav;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => onNavSelect(item.id)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '11px 16px',
-                    borderRadius: radius.full,
-                    backgroundColor: isActive ? colors.primaryGlow : 'transparent',
-                    color: isActive ? colors.text : colors.muted,
-                    fontWeight: isActive ? 600 : 500,
-                    border: isActive ? `1px solid ${colors.primary}` : '1px solid transparent',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    fontSize: '0.875rem',
-                    transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                    boxShadow: isActive ? `0 4px 14px ${colors.primaryGlow}` : 'none',
-                  }}
-                >
-                  <span style={{ display: 'inline-flex', color: isActive ? colors.primaryLight : colors.muted }}>{item.icon}</span>
-                  <span>{item.label}</span>
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Infrastructure Health Card */}
-          <div
-            style={{
-              padding: '16px',
-              margin: '12px',
-              backgroundColor: colors.background,
-              borderRadius: radius.lg,
-              border: `1px solid ${colors.borderSubtle}`,
-              fontSize: '0.75rem',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ color: colors.muted, fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Icon name="server" size={14} color={colors.muted} /> Go API
-              </span>
-              <span style={{ color: colors.success, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: colors.success }} />
-                :8080 Active
-              </span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ color: colors.muted, fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Icon name="database" size={14} color={colors.muted} /> PostgreSQL DB
-              </span>
-              <span style={{ color: colors.purple, fontWeight: 700 }}>pgkit Engine</span>
-            </div>
-          </div>
-        </aside>
-
-        {/* Floating Main Workspace Sheet Container */}
+        {/* Left: Brand Logo & Tagline */}
         <div
-          style={{
-            flex: 1,
-            backgroundColor: colors.surfaceGlass,
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: `1px solid ${colors.borderSubtle}`,
-            borderRadius: radius['2xl'],
-            boxShadow: shadows.xl,
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-            transition: 'all 250ms ease',
-          }}
+          onClick={() => onNavSelect('dashboard')}
+          style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
         >
-          {/* Topbar Header Bar */}
-          <header
+          <div
             style={{
-              height: '64px',
-              borderBottom: `1px solid ${colors.borderSubtle}`,
+              width: '36px',
+              height: '36px',
+              borderRadius: radius.sm,
+              background: `linear-gradient(135deg, ${colors.primary}, ${colors.indigo})`,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '0 24px',
-              zIndex: zIndex.sticky,
+              justifyContent: 'center',
+              color: '#FFF',
+              boxShadow: shadows.glowPrimary,
             }}
           >
-            {/* Search Pill Input */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                backgroundColor: colors.background,
-                border: `1px solid ${colors.borderSubtle}`,
-                borderRadius: radius.full,
-                padding: '8px 18px',
-                width: '360px',
-              }}
-            >
-              <Icon name="search" size={16} color={colors.muted} />
-              <input
-                type="text"
-                placeholder="Search CS concepts, algorithms, labs..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  outline: 'none',
-                  color: colors.text,
-                  fontSize: '0.85rem',
-                  width: '100%',
-                }}
-              />
-              <span
-                style={{
-                  fontSize: '0.7rem',
-                  fontWeight: 700,
-                  backgroundColor: colors.surfaceHover,
-                  color: colors.muted,
-                  padding: '2px 6px',
-                  borderRadius: radius.xs,
-                  fontFamily: 'monospace',
-                }}
-              >
-                ⌘K
-              </span>
+            <Icon name="sparkles" size={18} color="#FFFFFF" />
+          </div>
+          <div>
+            <div style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.03em', color: colors.text, fontFamily: 'Outfit, sans-serif', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              DevDepth <span style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: radius.xs, background: colors.primaryGlow, color: colors.primaryLight, fontWeight: 700 }}>PRO</span>
             </div>
+          </div>
+        </div>
 
-            {/* Right Status, Theme Toggle & User Auth Controls */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              {/* Theme Toggle Button (Light/Dark Switch) */}
+        {/* Center: Navigation Pills */}
+        <nav style={{ display: 'flex', alignItems: 'center', gap: '4px', background: colors.surface, padding: '4px', borderRadius: radius.md, border: `1px solid ${colors.borderSubtle}` }}>
+          {navItems.map((item) => {
+            const isActive = item.id === activeNav;
+            return (
               <button
-                onClick={toggleTheme}
-                title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
+                key={item.id}
+                onClick={() => onNavSelect(item.id)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
                   padding: '7px 16px',
-                  borderRadius: radius.full,
-                  backgroundColor: colors.background,
-                  border: `1px solid ${colors.borderSubtle}`,
-                  color: colors.text,
+                  borderRadius: radius.sm,
+                  backgroundColor: isActive ? colors.primaryGlow : 'transparent',
+                  color: isActive ? colors.primaryLight : colors.muted,
+                  fontWeight: isActive ? 700 : 500,
+                  border: isActive ? `1px solid ${colors.primary}` : '1px solid transparent',
                   cursor: 'pointer',
-                  fontSize: '0.82rem',
-                  fontWeight: 600,
+                  fontSize: '0.85rem',
                   transition: 'all 200ms ease',
                 }}
               >
-                <Icon name={isDark ? 'sun' : 'moon'} size={15} color={isDark ? '#F59E0B' : colors.primaryLight} />
-                <span>{isDark ? 'Light' : 'Dark'}</span>
+                <span style={{ display: 'inline-flex', color: isActive ? colors.primaryLight : colors.muted }}>{item.icon}</span>
+                <span>{item.label}</span>
               </button>
+            );
+          })}
+        </nav>
 
-              {/* API Online Status Badge */}
+        {/* Right: Search, Theme Toggle, User Profile / Auth */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Search Bar Input */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              backgroundColor: colors.background,
+              border: `1px solid ${colors.borderSubtle}`,
+              borderRadius: radius.sm,
+              padding: '6px 14px',
+              width: '220px',
+            }}
+          >
+            <Icon name="search" size={14} color={colors.muted} />
+            <input
+              type="text"
+              placeholder="Search concepts..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                background: 'none',
+                border: 'none',
+                outline: 'none',
+                color: colors.text,
+                fontSize: '0.8rem',
+                width: '100%',
+              }}
+            />
+            <span style={{ fontSize: '0.65rem', fontWeight: 700, color: colors.muted, fontFamily: 'monospace' }}>⌘K</span>
+          </div>
+
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '36px',
+              height: '36px',
+              borderRadius: radius.sm,
+              backgroundColor: colors.background,
+              border: `1px solid ${colors.borderSubtle}`,
+              color: colors.text,
+              cursor: 'pointer',
+            }}
+          >
+            <Icon name={isDark ? 'sun' : 'moon'} size={16} color={isDark ? '#F59E0B' : colors.primaryLight} />
+          </button>
+
+          {/* User Auth Controls */}
+          {user ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div
+                onClick={() => onNavSelect('notes')}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  padding: '6px 12px',
-                  borderRadius: radius.full,
-                  backgroundColor: colors.background,
-                  border: `1px solid ${colors.borderSubtle}`,
-                  fontSize: '0.78rem',
+                  gap: '8px',
+                  padding: '6px 14px',
+                  borderRadius: radius.sm,
+                  background: `linear-gradient(135deg, ${colors.primaryGlow}, ${colors.indigoGlow})`,
+                  border: `1px solid ${colors.primary}`,
+                  fontSize: '0.8rem',
+                  color: colors.text,
+                  fontWeight: 700,
+                  cursor: 'pointer',
                 }}
               >
-                <span
-                  style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                    backgroundColor: apiStatus === 'connected' ? colors.success : colors.warning,
-                  }}
-                />
-                <span style={{ color: colors.muted, fontWeight: 500 }}>
-                  {apiStatus === 'connected' ? 'API Online' : 'Connecting...'}
-                </span>
+                <Icon name="user" size={15} color={colors.primaryLight} />
+                <span>{user.name || user.email.split('@')[0]}</span>
               </div>
 
-              {/* Account / Auth Button or User Badge with Working Logout */}
-              {user ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '6px 14px',
-                      borderRadius: radius.full,
-                      background: `linear-gradient(135deg, ${colors.primaryGlow}, ${colors.indigoGlow})`,
-                      border: `1px solid ${colors.primary}`,
-                      fontSize: '0.8rem',
-                      color: colors.text,
-                      fontWeight: 700,
-                    }}
-                  >
-                    <Icon name="user" size={15} color={colors.primaryLight} />
-                    <span>{user.name || user.email.split('@')[0]}</span>
-                  </div>
-
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={onLogout}
-                    style={{ fontWeight: 700, padding: '6px 12px' }}
-                  >
-                    Log Out
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => setIsAuthModalOpen(true)}
-                  style={{ fontWeight: 700, padding: '7px 18px' }}
-                >
-                  Sign In / Register
-                </Button>
-              )}
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={onLogout}
+                style={{ fontWeight: 700, padding: '6px 12px', borderRadius: radius.sm }}
+              >
+                Log Out
+              </Button>
             </div>
-          </header>
-
-          {/* Main Dynamic Content Workspace */}
-          <main style={{ flex: 1, overflowY: 'auto', padding: '28px', backgroundColor: colors.canvas }}>
-            {children}
-          </main>
+          ) : (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setIsAuthModalOpen(true)}
+              style={{ fontWeight: 700, padding: '7px 18px', borderRadius: radius.sm }}
+            >
+              Sign In / Register
+            </Button>
+          )}
         </div>
-      </div>
+      </header>
+
+      {/* Main Content Workspace Container (AlgoMaster Max Width) */}
+      <main style={{ flex: 1, padding: '32px 28px', maxWidth: '1440px', width: '100%', margin: '0 auto' }}>
+        {children}
+      </main>
+
+      {/* Footer Bar */}
+      <footer
+        style={{
+          borderTop: `1px solid ${colors.borderSubtle}`,
+          backgroundColor: colors.surface,
+          padding: '20px 28px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          fontSize: '0.8rem',
+          color: colors.muted,
+        }}
+      >
+        <div>
+          © 2026 DevDepth. Built with Go (<code>pgkit</code> + <code>gopkg</code>) & React.
+        </div>
+        <div style={{ display: 'flex', gap: '16px' }}>
+          <span>API Status: <strong style={{ color: apiStatus === 'connected' ? colors.success : colors.warning }}>{apiStatus}</strong></span>
+          <span>PostgreSQL: <strong style={{ color: colors.purple }}>pgkit/db</strong></span>
+        </div>
+      </footer>
 
       {/* Auth Modal (Split-Card VOICE AURA Style) */}
       <AuthModal
