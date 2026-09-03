@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Course } from '../../types';
 import { DevDepthAPI } from '../../api/client';
-import { Clock, Layers, CheckCircle2, ChevronRight } from 'lucide-react';
-import { useTheme } from '@devdepth/ui';
+import { Card, Button, Badge, Icon, radius, useTheme } from '@devdepth/ui';
+import { LessonViewer } from './LessonViewer';
 
 interface CourseHubProps {
   onSelectLesson: (lessonId: string) => void;
@@ -14,6 +14,7 @@ export const CourseHub: React.FC<CourseHubProps> = ({ onSelectLesson }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [loading, setLoading] = useState<boolean>(true);
   const [activeCourse, setActiveCourse] = useState<Course | null>(null);
+  const [viewingLessonId, setViewingLessonId] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadCourses() {
@@ -40,36 +41,50 @@ export const CourseHub: React.FC<CourseHubProps> = ({ onSelectLesson }) => {
     { id: 'system-design', label: 'System Design' },
   ];
 
+  if (viewingLessonId && activeCourse) {
+    return (
+      <LessonViewer
+        course={activeCourse}
+        initialLessonId={viewingLessonId}
+        onBackToCourses={() => setViewingLessonId(null)}
+        onOpenVisualizer={(visId) => onSelectLesson(visId)}
+      />
+    );
+  }
+
   return (
-    <div style={{ padding: '8px 0', maxWidth: '1400px', margin: '0 auto' }}>
-      {/* Header */}
-      <div style={{ marginBottom: '32px' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: '9999px', background: colors.primaryGlow, color: colors.primaryLight, fontSize: '12px', fontWeight: 700, marginBottom: '12px' }}>
-          <Layers size={14} /> DevDepth Content Engine
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+      {/* Header Banner */}
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+          <Badge variant="purple">AlgoMaster Sheet Specs</Badge>
+          <Badge variant="info">Step-by-Step Learning</Badge>
         </div>
-        <h1 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px', color: colors.text }}>Interactive Learning Hub</h1>
-        <p style={{ color: colors.muted, fontSize: '16px' }}>
-          Schema-driven interactive courses across CS fundamentals. Every concept connects to a live visual state machine.
+        <h1 style={{ margin: 0, fontSize: '2.4rem', fontWeight: 900, color: colors.text, fontFamily: 'Outfit, sans-serif' }}>
+          Interactive CS Roadmaps & Concept Sheets
+        </h1>
+        <p style={{ margin: '6px 0 0 0', fontSize: '1rem', color: colors.muted }}>
+          Pattern-based learning modules with interactive visualizer labs and Go backend execution.
         </p>
       </div>
 
-      {/* Category Filter Pills */}
-      <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '8px', marginBottom: '32px' }}>
+      {/* Category Filter Pills (AlgoMaster Style) */}
+      <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', borderBottom: `1px solid ${colors.borderSubtle}` }}>
         {categories.map((cat) => (
           <button
             key={cat.id}
             onClick={() => setSelectedCategory(cat.id)}
             style={{
-              padding: '8px 18px',
-              borderRadius: '9999px',
+              padding: '8px 20px',
+              borderRadius: radius.full,
               border: selectedCategory === cat.id ? `1px solid ${colors.primary}` : `1px solid ${colors.borderSubtle}`,
-              background: selectedCategory === cat.id ? colors.primaryGlow : colors.surface,
+              backgroundColor: selectedCategory === cat.id ? colors.primaryGlow : colors.surface,
               color: selectedCategory === cat.id ? colors.primaryLight : colors.muted,
-              fontWeight: 600,
-              fontSize: '14px',
+              fontWeight: selectedCategory === cat.id ? 700 : 500,
+              fontSize: '0.875rem',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
-              transition: 'all 0.2s ease',
+              transition: 'all 200ms ease',
             }}
           >
             {cat.label}
@@ -77,65 +92,83 @@ export const CourseHub: React.FC<CourseHubProps> = ({ onSelectLesson }) => {
         ))}
       </div>
 
-      {/* Main Course Content */}
+      {/* Main Split Grid */}
       {loading ? (
-        <div className="glass-panel" style={{ padding: '48px', textAlign: 'center', color: colors.muted }}>
+        <Card variant="surface" style={{ padding: '48px', textAlign: 'center', color: colors.muted }}>
           Loading DevDepth courses from Go Backend API...
-        </div>
+        </Card>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px' }}>
-          {/* Left Column: Course Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: '24px' }}>
+          {/* Left Column: Course Selector Cards */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {courses.map((course) => {
               const isSelected = activeCourse?.id === course.id;
               return (
-                <div
+                <Card
                   key={course.id}
-                  className="glass-card"
+                  variant={isSelected ? 'glow' : 'glass'}
+                  interactive
                   onClick={() => setActiveCourse(course)}
-                  style={{
-                    padding: '20px',
-                    cursor: 'pointer',
-                    borderColor: isSelected ? colors.primary : undefined,
-                    background: isSelected ? colors.surfaceHover : undefined,
-                  }}
+                  style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span className="badge badge-primary">{course.category.toUpperCase()}</span>
-                    <span style={{ fontSize: '12px', color: colors.subtle, fontWeight: 500 }}>{course.level}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Badge variant="primary">{course.category.toUpperCase()}</Badge>
+                    <span style={{ fontSize: '0.75rem', color: colors.subtle, fontWeight: 600 }}>{course.level}</span>
                   </div>
-                  <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '6px', color: colors.text }}>{course.title}</h3>
-                  <p style={{ fontSize: '13px', color: colors.muted, marginBottom: '12px' }}>{course.description}</p>
-                  <div style={{ fontSize: '12px', color: colors.cyan, fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    {course.modules.length} Modules Available <ChevronRight size={14} />
+
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: colors.text }}>
+                    {course.title}
+                  </h3>
+
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: colors.muted, lineHeight: 1.5 }}>
+                    {course.description}
+                  </p>
+
+                  <div style={{ fontSize: '0.78rem', color: colors.cyan, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+                    <Icon name="layers" size={14} /> {course.modules.length} Modules Included
                   </div>
-                </div>
+                </Card>
               );
             })}
           </div>
 
-          {/* Right Column: Selected Course Detail & Modules */}
+          {/* Right Column: Active Course Modules & Lessons */}
           {activeCourse && (
-            <div className="glass-panel" style={{ padding: '28px' }}>
-              <div style={{ borderBottom: `1px solid ${colors.borderSubtle}`, paddingBottom: '20px', marginBottom: '24px' }}>
-                <span className="badge badge-primary" style={{ marginBottom: '8px' }}>{activeCourse.category.toUpperCase()}</span>
-                <h2 style={{ fontSize: '26px', fontWeight: 800, marginBottom: '8px', color: colors.text }}>{activeCourse.title}</h2>
-                <p style={{ color: colors.muted, fontSize: '15px' }}>{activeCourse.description}</p>
+            <Card variant="glass" style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div style={{ borderBottom: `1px solid ${colors.borderSubtle}`, paddingBottom: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                  <Badge variant="purple">{activeCourse.category.toUpperCase()}</Badge>
+                  <Badge variant="easy">{activeCourse.level}</Badge>
+                </div>
+                <h2 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 900, color: colors.text, fontFamily: 'Outfit, sans-serif' }}>
+                  {activeCourse.title}
+                </h2>
+                <p style={{ margin: '6px 0 0 0', color: colors.muted, fontSize: '0.95rem' }}>
+                  {activeCourse.description}
+                </p>
               </div>
 
-              {/* Modules & Lessons List */}
+              {/* Modules List */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {activeCourse.modules.map((mod, idx) => (
-                  <div key={mod.id} style={{ background: colors.background, borderRadius: 'var(--radius-md)', padding: '16px', border: `1px solid ${colors.borderSubtle}` }}>
-                    <div style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px', color: colors.text }}>
+                  <div
+                    key={mod.id}
+                    style={{
+                      backgroundColor: colors.background,
+                      borderRadius: radius.md,
+                      padding: '20px',
+                      border: `1px solid ${colors.borderSubtle}`,
+                    }}
+                  >
+                    <div style={{ fontWeight: 800, fontSize: '1.05rem', color: colors.text, marginBottom: '4px' }}>
                       Module {idx + 1}: {mod.title}
                     </div>
-                    <div style={{ fontSize: '13px', color: colors.muted, marginBottom: '16px' }}>
+                    <div style={{ fontSize: '0.85rem', color: colors.muted, marginBottom: '16px' }}>
                       {mod.description}
                     </div>
 
-                    {/* Lessons */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {/* Lessons list */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                       {mod.lessons.map((les) => (
                         <div
                           key={les.id}
@@ -143,39 +176,44 @@ export const CourseHub: React.FC<CourseHubProps> = ({ onSelectLesson }) => {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            padding: '12px 16px',
-                            background: colors.surface,
-                            borderRadius: 'var(--radius-sm)',
+                            padding: '14px 18px',
+                            backgroundColor: colors.surface,
+                            borderRadius: radius.sm,
                             border: `1px solid ${colors.borderSubtle}`,
                           }}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <CheckCircle2 size={18} color={colors.success} />
+                            <Icon name="checkCircle" size={18} color={colors.success} />
                             <div>
-                              <div style={{ fontWeight: 600, fontSize: '14px', color: colors.text }}>{les.title}</div>
-                              <div style={{ fontSize: '12px', color: colors.subtle, display: 'flex', gap: '12px', marginTop: '2px' }}>
+                              <div style={{ fontWeight: 700, fontSize: '0.9rem', color: colors.text }}>{les.title}</div>
+                              <div style={{ fontSize: '0.78rem', color: colors.subtle, display: 'flex', gap: '12px', marginTop: '2px' }}>
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                  <Clock size={12} /> {les.estimated_mins} mins
+                                  <Icon name="clock" size={12} /> {les.estimated_mins} mins
                                 </span>
                                 {les.visualizer_id && (
-                                  <span style={{ color: colors.cyan, fontWeight: 600 }}>
-                                    • Interactive Visual Lab
+                                  <span style={{ color: colors.cyan, fontWeight: 700 }}>
+                                    ⚡ Interactive Visual Lab
                                   </span>
                                 )}
                               </div>
                             </div>
                           </div>
 
-                          <button className="btn btn-secondary" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => onSelectLesson(les.id)}>
-                            Open Lesson
-                          </button>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => setViewingLessonId(les.id)}
+                            rightIcon={<Icon name="arrowRight" size={14} />}
+                          >
+                            Open Lab
+                          </Button>
                         </div>
                       ))}
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           )}
         </div>
       )}
