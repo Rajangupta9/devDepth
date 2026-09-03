@@ -195,7 +195,7 @@ export const UserDashboard: React.FC = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
                 padding: '6px 14px',
-                borderRadius: '9999px',
+                borderRadius: '4px',
                 backgroundColor: colors.surface,
                 border: `1px solid ${colors.borderSubtle}`,
                 color: colors.text,

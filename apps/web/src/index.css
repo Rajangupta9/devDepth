@@ -35,11 +35,11 @@
   --font-heading: 'Outfit', var(--font-sans);
   --font-mono: 'JetBrains Mono', monospace;
 
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --radius-xl: 24px;
-  --radius-full: 9999px;
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
+  --radius-full: 4px;
   --panel-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
 }
 

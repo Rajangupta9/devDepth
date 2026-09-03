@@ -19,6 +19,7 @@ export interface AppShellProps {
   apiStatus: 'connected' | 'disconnected' | 'connecting';
   user?: { email: string; name?: string } | null;
   onAuthSuccess?: (user: { email: string; name?: string }) => void;
+  onLogout?: () => void;
   children: React.ReactNode;
 }
 
@@ -30,6 +31,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   apiStatus,
   user,
   onAuthSuccess,
+  onLogout,
   children,
 }) => {
   const { mode, colors, toggleTheme } = useTheme();
@@ -70,7 +72,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
             border: `1px solid ${colors.borderSubtle}`,
-            borderRadius: radius['2xl'],
+            borderRadius: radius.md,
             boxShadow: shadows.xl,
             display: 'flex',
             flexDirection: 'column',
@@ -91,9 +93,9 @@ export const AppShell: React.FC<AppShellProps> = ({
           >
             <div
               style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: radius.md,
+                width: '36px',
+                height: '36px',
+                borderRadius: radius.sm,
                 background: `linear-gradient(135deg, ${colors.primary}, ${colors.indigo})`,
                 display: 'flex',
                 alignItems: 'center',
@@ -102,7 +104,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                 boxShadow: shadows.glowPrimary,
               }}
             >
-              <Icon name="sparkles" size={20} color="#FFFFFF" />
+              <Icon name="sparkles" size={18} color="#FFFFFF" />
             </div>
             <div>
               <div style={{ fontWeight: 800, fontSize: '1.15rem', letterSpacing: '-0.03em', color: colors.text, fontFamily: 'Outfit, sans-serif' }}>
@@ -127,7 +129,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                     alignItems: 'center',
                     gap: '12px',
                     padding: '11px 16px',
-                    borderRadius: radius.full,
+                    borderRadius: radius.sm,
                     backgroundColor: isActive ? colors.primaryGlow : 'transparent',
                     color: isActive ? colors.text : colors.muted,
                     fontWeight: isActive ? 600 : 500,
@@ -149,10 +151,10 @@ export const AppShell: React.FC<AppShellProps> = ({
           {/* Infrastructure Health Card */}
           <div
             style={{
-              padding: '16px',
+              padding: '14px',
               margin: '12px',
               backgroundColor: colors.background,
-              borderRadius: radius.lg,
+              borderRadius: radius.sm,
               border: `1px solid ${colors.borderSubtle}`,
               fontSize: '0.75rem',
             }}
@@ -183,7 +185,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
             border: `1px solid ${colors.borderSubtle}`,
-            borderRadius: radius['2xl'],
+            borderRadius: radius.md,
             boxShadow: shadows.xl,
             display: 'flex',
             flexDirection: 'column',
@@ -211,7 +213,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                 gap: '10px',
                 backgroundColor: colors.background,
                 border: `1px solid ${colors.borderSubtle}`,
-                borderRadius: radius.full,
+                borderRadius: radius.sm,
                 padding: '8px 18px',
                 width: '360px',
               }}
@@ -257,7 +259,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                   alignItems: 'center',
                   gap: '8px',
                   padding: '7px 16px',
-                  borderRadius: radius.full,
+                  borderRadius: radius.sm,
                   backgroundColor: colors.background,
                   border: `1px solid ${colors.borderSubtle}`,
                   color: colors.text,
@@ -278,7 +280,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                   alignItems: 'center',
                   gap: '6px',
                   padding: '6px 12px',
-                  borderRadius: radius.full,
+                  borderRadius: radius.sm,
                   backgroundColor: colors.background,
                   border: `1px solid ${colors.borderSubtle}`,
                   fontSize: '0.78rem',
@@ -297,31 +299,42 @@ export const AppShell: React.FC<AppShellProps> = ({
                 </span>
               </div>
 
-              {/* Account / Auth Button or User Badge */}
+              {/* Account / Auth Button or User Badge with Working Logout */}
               {user ? (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '6px 16px',
-                    borderRadius: radius.full,
-                    background: `linear-gradient(135deg, ${colors.primaryGlow}, ${colors.indigoGlow})`,
-                    border: `1px solid ${colors.primary}`,
-                    fontSize: '0.8rem',
-                    color: colors.text,
-                    fontWeight: 700,
-                  }}
-                >
-                  <Icon name="user" size={15} color={colors.primaryLight} />
-                  <span>{user.name || user.email.split('@')[0]}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '6px 14px',
+                      borderRadius: radius.sm,
+                      background: `linear-gradient(135deg, ${colors.primaryGlow}, ${colors.indigoGlow})`,
+                      border: `1px solid ${colors.primary}`,
+                      fontSize: '0.8rem',
+                      color: colors.text,
+                      fontWeight: 700,
+                    }}
+                  >
+                    <Icon name="user" size={15} color={colors.primaryLight} />
+                    <span>{user.name || user.email.split('@')[0]}</span>
+                  </div>
+
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={onLogout}
+                    style={{ fontWeight: 700, padding: '6px 12px', borderRadius: radius.sm }}
+                  >
+                    Log Out
+                  </Button>
                 </div>
               ) : (
                 <Button
                   variant="primary"
                   size="sm"
                   onClick={() => setIsAuthModalOpen(true)}
-                  style={{ fontWeight: 700, padding: '7px 18px' }}
+                  style={{ fontWeight: 700, padding: '7px 18px', borderRadius: radius.sm }}
                 >
                   Sign In / Register
                 </Button>

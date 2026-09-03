@@ -99,7 +99,7 @@ export const VisualizerStudio: React.FC = () => {
             onClick={() => setActiveLab('binary_search')}
             style={{
               padding: '6px 14px',
-              borderRadius: '9999px',
+              borderRadius: '4px',
               border: 'none',
               backgroundColor: activeLab === 'binary_search' ? colors.primaryGlow : 'transparent',
               color: activeLab === 'binary_search' ? colors.primaryLight : colors.muted,
@@ -114,7 +114,7 @@ export const VisualizerStudio: React.FC = () => {
             onClick={() => setActiveLab('two_pointers')}
             style={{
               padding: '6px 14px',
-              borderRadius: '9999px',
+              borderRadius: '4px',
               border: 'none',
               backgroundColor: activeLab === 'two_pointers' ? colors.primaryGlow : 'transparent',
               color: activeLab === 'two_pointers' ? colors.primaryLight : colors.muted,
@@ -129,7 +129,7 @@ export const VisualizerStudio: React.FC = () => {
             onClick={() => setActiveLab('tcp_handshake')}
             style={{
               padding: '6px 14px',
-              borderRadius: '9999px',
+              borderRadius: '4px',
               border: 'none',
               backgroundColor: activeLab === 'tcp_handshake' ? colors.primaryGlow : 'transparent',
               color: activeLab === 'tcp_handshake' ? colors.primaryLight : colors.muted,
@@ -144,7 +144,7 @@ export const VisualizerStudio: React.FC = () => {
             onClick={() => setActiveLab('os_scheduler')}
             style={{
               padding: '6px 14px',
-              borderRadius: '9999px',
+              borderRadius: '4px',
               border: 'none',
               backgroundColor: activeLab === 'os_scheduler' ? colors.primaryGlow : 'transparent',
               color: activeLab === 'os_scheduler' ? colors.primaryLight : colors.muted,
@@ -241,7 +241,7 @@ export const VisualizerStudio: React.FC = () => {
 
                 {/* Transmit Wire */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: colors.cyan, padding: '6px 14px', background: colors.primaryGlow, borderRadius: '9999px', border: `1px solid ${colors.cyan}` }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: colors.cyan, padding: '6px 14px', background: colors.primaryGlow, borderRadius: '4px', border: `1px solid ${colors.cyan}` }}>
                     ⚡ {(currentStep as any).packet}
                   </div>
                   <div style={{ width: '200px', height: '2px', background: colors.primary, animation: 'pulseGlow 2s infinite' }} />

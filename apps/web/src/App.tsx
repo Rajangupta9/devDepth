@@ -7,7 +7,7 @@ import { UserDashboard } from './components/Dashboard/UserDashboard';
 import { CourseHub } from './components/ContentEngine/CourseHub';
 import { CodeEditor } from './components/PracticeEngine/CodeEditor';
 import { APIMonitor } from './components/APIMonitor';
-import { DevDepthAPI } from './api/client';
+import { DevDepthAPI, getAuthToken, clearAuthToken } from './api/client';
 
 const NAV_ITEMS: NavItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: <Icon name="barChart" size={18} /> },
@@ -33,9 +33,31 @@ export function AppContent() {
       } else {
         setApiStatus('disconnected');
       }
+
+      // Check if user was logged in with a JWT token
+      const token = getAuthToken();
+      const savedUserStr = localStorage.getItem('devdepth_user_profile');
+      if (token && savedUserStr) {
+        try {
+          setUser(JSON.parse(savedUserStr));
+        } catch (e) {
+          // ignore
+        }
+      }
     }
     checkBackend();
   }, []);
+
+  const handleAuthSuccess = (loggedUser: { email: string; name?: string }) => {
+    setUser(loggedUser);
+    localStorage.setItem('devdepth_user_profile', JSON.stringify(loggedUser));
+  };
+
+  const handleLogout = () => {
+    clearAuthToken();
+    localStorage.removeItem('devdepth_user_profile');
+    setUser(null);
+  };
 
   return (
     <AppShell
@@ -45,7 +67,8 @@ export function AppContent() {
       anonymousId={anonymousId}
       apiStatus={apiStatus}
       user={user}
-      onAuthSuccess={(loggedUser) => setUser(loggedUser)}
+      onAuthSuccess={handleAuthSuccess}
+      onLogout={handleLogout}
     >
       {activeNav === 'dashboard' && <LearnerDashboard onNavigate={setActiveNav} />}
       {activeNav === 'courses' && <CourseHub onSelectLesson={() => setActiveNav('visualizer')} />}
