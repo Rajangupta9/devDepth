@@ -16,6 +16,7 @@ import (
 
 	"devdepth/api/internal/auth"
 	"devdepth/api/internal/courses"
+	"devdepth/api/internal/notes"
 	"devdepth/api/internal/problems"
 	"devdepth/api/internal/submissions"
 	"devdepth/api/internal/users"
@@ -89,6 +90,10 @@ func main() {
 	subService := submissions.NewService(subRepo)
 	subHandler := submissions.NewHandler(subService)
 
+	noteRepo := notes.NewRepository(pgClient)
+	noteService := notes.NewService(noteRepo)
+	noteHandler := notes.NewHandler(noteService)
+
 	// Define Open (Public) API Routes using gopkg RouteSpec
 	openRoutes := []gopkgHttp.RouteSpec{
 		{Method: "GET", Path: "/health", Handler: healthCheckHandler},
@@ -102,6 +107,9 @@ func main() {
 		{Method: "POST", Path: "/submissions/run", Handler: subHandler.Run},
 		{Method: "POST", Path: "/submissions/submit", Handler: subHandler.Submit},
 		{Method: "GET", Path: "/submissions/detail", Handler: subHandler.GetByID},
+		{Method: "GET", Path: "/notes", Handler: noteHandler.List},
+		{Method: "POST", Path: "/notes", Handler: noteHandler.Save},
+		{Method: "DELETE", Path: "/notes", Handler: noteHandler.Delete},
 	}
 
 	gopkgHttp.LoadOpenAPIs(openRoutes, mux)
@@ -130,7 +138,7 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	gopkgHttp.Success(w, map[string]interface{}{
 		"status":     "healthy",
 		"service":    "DevDepth Backend API",
-		"engine":     "Content + Visual + Practice Engine",
+		"engine":     "Content + Visual + Practice + Notes Engine",
 		"database":   "PostgreSQL (github.com/rajangupta9/pgkit)",
 		"auth":       "github.com/Rajangupta9/gopkg/pkg/auth (Argon2id + HS256 JWT)",
 		"middleware": "github.com/Rajangupta9/gopkg/pkg/middleware (EnsureAuth via gopkgHttp.LoadAPIs)",

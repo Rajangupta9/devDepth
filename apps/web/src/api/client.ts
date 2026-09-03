@@ -1,4 +1,4 @@
-import { Course, Problem, Submission, RunResult } from '../types';
+import { Course, Problem, Submission, RunResult, UserNote } from '../types';
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -98,6 +98,24 @@ export const DevDepthAPI = {
     return fetchJson<Submission>('/submissions/submit', {
       method: 'POST',
       body: JSON.stringify({ problem_slug: problemSlug, language, code, user_id: userId }),
+    });
+  },
+
+  async getNotes(userId?: string) {
+    const query = userId ? `?user_id=${userId}` : '';
+    return fetchJson<UserNote[]>(`/notes${query}`);
+  },
+
+  async saveNote(data: { lesson_id?: string; title: string; content: string }) {
+    return fetchJson<UserNote>('/notes', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async deleteNote(noteId: string) {
+    return fetchJson<{ message: string }>(`/notes?id=${noteId}`, {
+      method: 'DELETE',
     });
   },
 };

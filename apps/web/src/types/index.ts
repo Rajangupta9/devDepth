@@ -7,6 +7,16 @@ export interface User {
   created_at?: string;
 }
 
+export interface UserNote {
+  id: string;
+  user_id: string;
+  lesson_id?: string;
+  title: string;
+  content: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface Lesson {
   id: string;
   title: string;
