@@ -72,7 +72,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
             border: `1px solid ${colors.borderSubtle}`,
-            borderRadius: radius.md,
+            borderRadius: radius['2xl'],
             boxShadow: shadows.xl,
             display: 'flex',
             flexDirection: 'column',
@@ -93,9 +93,9 @@ export const AppShell: React.FC<AppShellProps> = ({
           >
             <div
               style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: radius.sm,
+                width: '40px',
+                height: '40px',
+                borderRadius: radius.md,
                 background: `linear-gradient(135deg, ${colors.primary}, ${colors.indigo})`,
                 display: 'flex',
                 alignItems: 'center',
@@ -104,7 +104,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                 boxShadow: shadows.glowPrimary,
               }}
             >
-              <Icon name="sparkles" size={18} color="#FFFFFF" />
+              <Icon name="sparkles" size={20} color="#FFFFFF" />
             </div>
             <div>
               <div style={{ fontWeight: 800, fontSize: '1.15rem', letterSpacing: '-0.03em', color: colors.text, fontFamily: 'Outfit, sans-serif' }}>
@@ -129,7 +129,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                     alignItems: 'center',
                     gap: '12px',
                     padding: '11px 16px',
-                    borderRadius: radius.sm,
+                    borderRadius: radius.full,
                     backgroundColor: isActive ? colors.primaryGlow : 'transparent',
                     color: isActive ? colors.text : colors.muted,
                     fontWeight: isActive ? 600 : 500,
@@ -151,10 +151,10 @@ export const AppShell: React.FC<AppShellProps> = ({
           {/* Infrastructure Health Card */}
           <div
             style={{
-              padding: '14px',
+              padding: '16px',
               margin: '12px',
               backgroundColor: colors.background,
-              borderRadius: radius.sm,
+              borderRadius: radius.lg,
               border: `1px solid ${colors.borderSubtle}`,
               fontSize: '0.75rem',
             }}
@@ -185,7 +185,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
             border: `1px solid ${colors.borderSubtle}`,
-            borderRadius: radius.md,
+            borderRadius: radius['2xl'],
             boxShadow: shadows.xl,
             display: 'flex',
             flexDirection: 'column',
@@ -213,7 +213,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                 gap: '10px',
                 backgroundColor: colors.background,
                 border: `1px solid ${colors.borderSubtle}`,
-                borderRadius: radius.sm,
+                borderRadius: radius.full,
                 padding: '8px 18px',
                 width: '360px',
               }}
@@ -259,7 +259,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                   alignItems: 'center',
                   gap: '8px',
                   padding: '7px 16px',
-                  borderRadius: radius.sm,
+                  borderRadius: radius.full,
                   backgroundColor: colors.background,
                   border: `1px solid ${colors.borderSubtle}`,
                   color: colors.text,
@@ -280,7 +280,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                   alignItems: 'center',
                   gap: '6px',
                   padding: '6px 12px',
-                  borderRadius: radius.sm,
+                  borderRadius: radius.full,
                   backgroundColor: colors.background,
                   border: `1px solid ${colors.borderSubtle}`,
                   fontSize: '0.78rem',
@@ -308,7 +308,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                       alignItems: 'center',
                       gap: '8px',
                       padding: '6px 14px',
-                      borderRadius: radius.sm,
+                      borderRadius: radius.full,
                       background: `linear-gradient(135deg, ${colors.primaryGlow}, ${colors.indigoGlow})`,
                       border: `1px solid ${colors.primary}`,
                       fontSize: '0.8rem',
@@ -324,7 +324,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                     variant="danger"
                     size="sm"
                     onClick={onLogout}
-                    style={{ fontWeight: 700, padding: '6px 12px', borderRadius: radius.sm }}
+                    style={{ fontWeight: 700, padding: '6px 12px' }}
                   >
                     Log Out
                   </Button>
@@ -334,7 +334,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                   variant="primary"
                   size="sm"
                   onClick={() => setIsAuthModalOpen(true)}
-                  style={{ fontWeight: 700, padding: '7px 18px', borderRadius: radius.sm }}
+                  style={{ fontWeight: 700, padding: '7px 18px' }}
                 >
                   Sign In / Register
                 </Button>
